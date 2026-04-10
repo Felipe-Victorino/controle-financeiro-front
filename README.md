@@ -2,4 +2,4 @@
 
 ## Tecnologias
 
-Feito com Vite, React e Typescript.
+Feito com Vite, Tailwind, React e Typescript.
