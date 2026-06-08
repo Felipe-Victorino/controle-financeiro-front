@@ -1,11 +1,6 @@
-# React + TypeScript + Vite
+# Finances Management System - FinFin
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+This repository conteins React and Typescript code built for an interface that connects to a remote backend, therefore it will not function without that connection established.
 
 ## React Compiler
 
