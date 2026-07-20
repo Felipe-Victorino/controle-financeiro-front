@@ -1,0 +1,5 @@
+@reference "tailwindcss";
+
+.card {
+    @apply px-6 pt-6 pb-12  rounded shadow-2xs bg-white/80 dark:bg-white/5 gap-2;
+}
