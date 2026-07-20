@@ -1,0 +1,5 @@
+@reference "tailwindcss";
+
+.divider {
+    @apply dark:border-emerald-50 border-slate-900
+}
