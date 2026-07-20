@@ -1,0 +1,4 @@
+
+.error-message {
+    @apply dark:text-red-500 text-red-900
+}
