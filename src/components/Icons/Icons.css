@@ -1,0 +1,5 @@
+@reference "tailwindcss";
+
+.icons {
+    @apply dark:text-white text-slate-950;
+}
