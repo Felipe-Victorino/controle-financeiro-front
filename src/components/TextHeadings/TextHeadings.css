@@ -1,0 +1,17 @@
+@reference "tailwindcss";
+
+.header-title {
+    @apply dark:text-white text-black font-extrabold text-5xl py-3;
+}
+
+.header-subtitle {
+    @apply dark:text-white text-black font-bold text-2xl py-3;
+}
+
+.text-body {
+    @apply dark:text-white text-black font-normal p-3;
+}
+
+.error-message {
+    @apply text-red-500 font-bold p-3;
+}
