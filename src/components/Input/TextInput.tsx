@@ -8,7 +8,7 @@ interface TextInput {
     name: string;
     value: string;
     inputtype: string;
-    onChangeInput: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onChanged: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const TextInput = ({
@@ -17,7 +17,7 @@ const TextInput = ({
                        name,
                        value,
                        inputtype = "text",
-                       onChangeInput = () => null,
+                       onChanged = () => null,
                    }: TextInput
 ) => {
     return (
@@ -33,7 +33,7 @@ const TextInput = ({
                 id={id}
                 name={name}
                 value={value}
-                onChange={(e) => onChangeInput(e)}
+                onChange={(e) => onChanged(e)}
                 className="input text-body"
             />
         </div>
