@@ -1,37 +1,39 @@
 import TextInput from "../../components/Input/TextInput";
 import Card from "../../components/Card/Card";
-import "../../components/TextHeadings/TextHeadings.css"
-import UserService from "../../services/UserService";
+import "../../styles/TextHeadings.css"
 import React, {useState} from "react";
 import type {AxiosError} from "axios";
 import AsyncButton from "../../components/Button/AsyncButton.tsx";
 import Divider from "../../components/Divider/Divider.tsx";
 import BackButton from "../../components/BackButton/BackButton.tsx";
+import ErrorMessage from "../../components/Warning/ErrorMessage.tsx";
+import "../../styles/Pages.css"
+import AuthService from "../../services/AuthService.ts";
+import PasswordInput from "../../components/Input/PasswordInput.tsx";
 
-
-const userService: UserService = new UserService();
+const authService: AuthService = new AuthService();
 
 const NewUser = () => {
 
     return (
-        <div>
-            <div className="h-1/1 flex flex-row justify-center items-middle">
-                <div className="flex flex-col justify-center items-middle">
 
-                    <Card className={"grid grid-cols-1 auto-rows-min md:grid-cols-2 gap-1"}>
-                        <div className={"row-start-1  md:col-span-2"}><BackButton/></div>
-                        <div
-                            className={"row-start-2 md:col-start-1 md:row-start-2 flex flex-col justify-center items-start gap-20"}>
-                            <h2 className="header-title">Cadastrar <br/> nova conta</h2>
-                        </div>
-                        <div className={"row-start-3 md:col-start-2 md:row-start-2"}>
-                            <NewUserForm/>
-                        </div>
+        <div className="page-fixed-center-start">
+            <div className="flex flex-col justify-center items-middle">
 
-                    </Card>
-                </div>
+                <Card className={"grid grid-cols-1 auto-rows-min md:grid-cols-2 gap-1"}>
+                    <div className={"row-start-1  md:col-span-2"}><BackButton to={"/"}/></div>
+                    <div
+                        className={"row-start-2 md:col-start-1 md:row-start-2 flex flex-col justify-center items-start gap-20"}>
+                        <h2 className="header-title">Cadastrar <br/> nova conta</h2>
+                    </div>
+                    <div className={"row-start-3 md:col-start-2 md:row-start-2"}>
+                        <NewUserForm/>
+                    </div>
+
+                </Card>
             </div>
         </div>
+
     );
 };
 
@@ -60,13 +62,12 @@ const NewUserForm = () => {
             return;
         }
 
-
         setLoading(true);
 
         setTimeout(
             async () => {
                 try {
-                    await userService.insert(user);
+                    await authService.registerNewUser(user)
                     setSuccess('Cadastro realizado com sucesso.');
 
                 } catch (e: unknown) {
@@ -81,7 +82,7 @@ const NewUserForm = () => {
                 console.log(error);
                 console.log(success)
             },
-            2000
+            500
         )
 
 
@@ -99,7 +100,7 @@ const NewUserForm = () => {
                 name="name"
                 value={user.name}
                 inputtype="text"
-                onChangeInput={(e) => handleChange(e)}
+                onChanged={(e) => handleChange(e)}
             />
             <TextInput
                 label={"Email"}
@@ -107,26 +108,24 @@ const NewUserForm = () => {
                 name="email"
                 value={user.email}
                 inputtype="text"
-                onChangeInput={(e) => handleChange(e)}
+                onChanged={(e) => handleChange(e)}
             />
 
             <Divider/>
 
-            <TextInput
+            <PasswordInput
                 label={"Senha"}
                 id="passwd"
                 name="passwd"
                 value={user.passwd}
-                inputtype="password"
-                onChangeInput={(e) => handleChange(e)}
+                onChanged={(e) => handleChange(e)}
             />
-            <TextInput
+            <PasswordInput
                 label={"Confirmação da Senha"}
                 id="confirm"
                 name="passwdConfirm"
                 value={user.passwdConfirm}
-                inputtype="password"
-                onChangeInput={(e) => handleChange(e)}
+                onChanged={(e) => handleChange(e)}
             />
 
             <AsyncButton
@@ -137,8 +136,10 @@ const NewUserForm = () => {
                 Cadastrar
             </AsyncButton>
 
-
+            <ErrorMessage> {error}</ErrorMessage>
         </form>
+
+
     );
 };
 
