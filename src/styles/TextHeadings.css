@@ -15,3 +15,7 @@
 .error-message {
     @apply text-red-500 font-bold p-3;
 }
+
+.link {
+    @apply dark:text-emerald-200 text-emerald-800 font-medium text-pretty p-1 hover:underline;
+}
