@@ -1,0 +1,15 @@
+@import url("../../styles/TextHeadings.css");
+
+@reference "tailwindcss";
+
+.input {
+    @apply w-full dark:bg-white/5 bg-black/5 rounded p-3 border-2 border-gray-200 dark:border-emerald-800 hover:border-gray-400;
+}
+
+.input-container {
+    @apply flex flex-col justify-center rounded px-2 py-3 gap-2;
+}
+
+.input-label {
+    @apply block w-4/4 font-normal dark:text-sky-50 p-1
+}
