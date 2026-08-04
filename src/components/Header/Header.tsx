@@ -1,11 +1,19 @@
-import "../TextHeadings/TextHeadings.css"
+import "../../styles/TextHeadings.css"
+import "./Header.css"
+import AuthNavbar from "../Navbar/AuthNavbar.tsx";
 
-const Header = ({title}: { title: string }) => {
+interface HeaderTypes {
+    title: string,
+
+}
+
+const Header = ({title}: HeaderTypes) => {
     // que estranho
     return (
-        <header className="bg-emerald-500 dark:bg-emerald-900  flex-row justify-evenly">
+        <header className="header">
             <h1 className="font-bold text-1xl p-3 text-sky-50">{title ? title : "FinFin"}</h1>
-            <nav></nav>
+
+            {<AuthNavbar/>}
         </header>
     );
 };
