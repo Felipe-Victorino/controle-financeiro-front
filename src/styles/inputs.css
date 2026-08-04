@@ -1,0 +1,5 @@
+@reference "tailwindcss"
+
+.checkbox {
+    @apply w-4 h-4 accent-emerald-500;
+}
