@@ -1,6 +1,8 @@
+import "../../styles/Pages.css"
+
 const Dashboard = () => {
     return (
-        <div></div>
+        <div className={"page-centered"}></div>
     )
 }
 
