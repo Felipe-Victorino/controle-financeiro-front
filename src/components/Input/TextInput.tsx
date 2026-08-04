@@ -1,5 +1,6 @@
 import type React from "react";
-import "../TextHeadings/TextHeadings.css"
+import "./input.css"
+import "../../styles/TextHeadings.css"
 
 interface TextInput {
     label: string;
@@ -20,9 +21,9 @@ const TextInput = ({
                    }: TextInput
 ) => {
     return (
-        <div className="flex-col justify-center rounded px-2 py-3">
+        <div className="input-container">
             <label
-                className="block w-4/4 font-normal dark:text-sky-50 p-1"
+                className="input-label"
                 htmlFor={id}>
                 {label}:
             </label>
@@ -33,7 +34,7 @@ const TextInput = ({
                 name={name}
                 value={value}
                 onChange={(e) => onChangeInput(e)}
-                className="w-full dark:bg-white/5 bg-black/5 rounded p-3 text-body border-2 border-gray-200 dark:border-emerald-800 hover:border-gray-400"
+                className="input text-body"
             />
         </div>
     );
