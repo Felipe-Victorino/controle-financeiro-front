@@ -1,0 +1,12 @@
+@reference "tailwindcss";
+
+.page-centered {
+    @apply flex flex-col justify-center h-full items-center;
+}
+
+.page-fixed-center-start {
+    @apply flex flex-col justify-start items-center pt-20;
+}
+
+
+
