@@ -9,6 +9,10 @@ abstract class BaseService {
         this.endPoint = endPoint;
     }
 
+    async insertIn(target: string, data: object) {
+        return await api.post(this.endPoint + target, data);
+    }
+
     async insert(data: object) {
         return await api.post(this.endPoint, data);
     }
