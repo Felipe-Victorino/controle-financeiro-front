@@ -73,7 +73,7 @@ const LoginForm = () => {
                 name="login"
                 value={user.login}
                 inputtype="text"
-                onChangeInput={(e) => handleChange(e)}
+                onChanged={(e) => handleChange(e)}
             />
 
             <PasswordInput
