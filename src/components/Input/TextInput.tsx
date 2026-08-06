@@ -1,5 +1,5 @@
 import type React from "react";
-import "./input.css"
+import "./Input.css"
 import "../../styles/TextHeadings.css"
 
 interface TextInput {
@@ -36,6 +36,7 @@ const TextInput = ({
                 onChange={(e) => onChanged(e)}
                 className="input text-body"
             />
+
         </div>
     );
 };
