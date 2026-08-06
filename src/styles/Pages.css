@@ -5,8 +5,10 @@
 }
 
 .page-fixed-center-start {
-    @apply flex flex-col justify-start items-center pt-20;
+    @apply flex flex-col justify-start items-center md:pt-20;
 }
 
-
+.page-content {
+    @apply flex flex-col justify-center items-center min-w-0 md:w-5/7;
+}
 
