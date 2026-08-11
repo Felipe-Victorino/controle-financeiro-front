@@ -1,11 +1,11 @@
 import "../../styles/Pages.css"
+import PageContainer from "@/components/containers/PageContainer.tsx";
 
 const Dashboard = () => {
     return (
-        <div className={"page-centered"}>
-
-            
-        </div>
+        <PageContainer>
+            To be built
+        </PageContainer>
     )
 }
 
