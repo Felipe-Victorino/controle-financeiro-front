@@ -1,15 +1,14 @@
-import TextInput from "../../components/Input/TextInput";
-import Card from "../../components/Card/Card";
+import TextInput from "@/components/tailwind/Input/TextInput";
+import Card from "@/components/tailwind/Card/Card";
 import "../../styles/TextHeadings.css"
 import React, {useState} from "react";
-import type {AxiosError} from "axios";
-import AsyncButton from "../../components/Button/AsyncButton.tsx";
-import Divider from "../../components/Divider/Divider.tsx";
-import BackButton from "../../components/BackButton/BackButton.tsx";
-import ErrorMessage from "../../components/Warning/ErrorMessage.tsx";
+import AsyncButton from "@/components/tailwind/Button/AsyncButton.tsx";
+import Divider from "@/components/tailwind/Divider/Divider.tsx";
 import "../../styles/Pages.css"
 import AuthService from "../../services/AuthService.ts";
-import PasswordInput from "../../components/Input/PasswordInput.tsx";
+import PasswordInput from "@/components/tailwind/Input/PasswordInput.tsx";
+import ErrorDialog from "@/components/tailwind/Dialog/ErrorDialog.tsx";
+import type {NetworkErrorResponse} from "@/types/ServerErrors.ts";
 
 const authService: AuthService = new AuthService();
 
@@ -18,10 +17,9 @@ const NewUser = () => {
     return (
 
         <div className="page-fixed-center-start">
-            <div className="flex flex-col justify-center items-middle">
+            <div className="page-content">
 
-                <Card className={"grid grid-cols-1 auto-rows-min md:grid-cols-2 gap-1"}>
-                    <div className={"row-start-1  md:col-span-2"}><BackButton to={"/"}/></div>
+                <Card className={"grid grid-cols-1 auto-rows-min min-w-0 md:grid-cols-2 gap-1"}>
                     <div
                         className={"row-start-2 md:col-start-1 md:row-start-2 flex flex-col justify-center items-start gap-20"}>
                         <h2 className="header-title">Cadastrar <br/> nova conta</h2>
@@ -40,24 +38,71 @@ const NewUser = () => {
 const NewUserForm = () => {
     const [user, setUser] = useState({name: "", email: "", passwd: "", passwdConfirm: ""},);
     const [error, setError] = useState("");
+    const [dialog, setDialog] = useState(false);
     const [success, setSuccess] = useState("");
     const [loading, setLoading] = useState(false);
+    const [strength, setStrength] = useState(0);
 
+    const isStrongPassword = (password: string) => {
 
-    /*
-    const verifyLogin () => {
-        Navigate()
-    }
+        let strength: number = 0;
 
-    */
+        if (password.length >= 8) {
+            strength++;
+        }
+
+        if (/[A-Z]+/.test(password)) {
+            strength++;
+        }
+
+        if (/[0-9]+/.test(password)) {
+            strength++;
+        }
+
+        if (/[!@#$&*%]+/.test(password)) {
+            strength++;
+        }
+
+        if (password.length < 8) {
+            strength = 0;
+        }
+
+        setStrength(strength)
+        return strength
+    };
+
+    const validateFields = () => {
+        if (user.name == "" || user.email == "" || user.passwd == "" || user.passwdConfirm == "") {
+            setError("Um ou mais campos estão vazios, por favor preenchê-los")
+            return false;
+        }
+        return true;
+    };
+
 
     const createRegistration = async (event: React.MouseEvent) => {
         event.preventDefault();
+        setDialog(false)
         setError('');
+
         setSuccess('');
+        isStrongPassword(user.passwd);
+        console.log("password strength: " + strength)
+
+        if (!validateFields()) {
+            setDialog(true);
+            return;
+        }
+
+        if (strength == 0) {
+            setError("Senha é muito fraca, por favor inserir números, letras maiúsculas e caracters especiais")
+            setDialog(true)
+            return
+        }
 
         if (user.passwd !== user.passwdConfirm) {
             setError('As senhas devem ser iguais.');
+            setDialog(true)
             console.log(error)
             return;
         }
@@ -71,11 +116,12 @@ const NewUserForm = () => {
                     setSuccess('Cadastro realizado com sucesso.');
 
                 } catch (e: unknown) {
-                    const err = e as AxiosError;
+                    const err = e as NetworkErrorResponse;
                     const message =
                         err.message ||
                         'Nao foi possivel realizar o cadastro.';
                     setError(message);
+                    setDialog(true)
                 } finally {
                     setLoading(false);
                 }
@@ -93,7 +139,8 @@ const NewUserForm = () => {
     }
 
     return (
-        <form className="flex flex-col gap-4">
+        <form className="flex flex-col gap-4 grow-0">
+            <ErrorDialog message={error} isActive={dialog}/>
             <TextInput
                 label={"Nome"}
                 id="name"
@@ -136,7 +183,7 @@ const NewUserForm = () => {
                 Cadastrar
             </AsyncButton>
 
-            <ErrorMessage> {error}</ErrorMessage>
+
         </form>
 
 

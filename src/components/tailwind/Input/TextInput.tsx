@@ -1,6 +1,6 @@
 import type React from "react";
 import "./Input.css"
-import "../../styles/TextHeadings.css"
+import "../../../styles/TextHeadings.css"
 
 interface TextInput {
     label: string;

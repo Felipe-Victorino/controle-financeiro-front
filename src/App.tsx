@@ -1,39 +1,37 @@
 import "./App.css";
 
 import {BrowserRouter, Route, Routes} from "react-router-dom";
-import Login from "./pages/Login/Login";
-import Header from "./components/Header/Header";
-import NewUser from "./pages/NewUser/NewUser";
-import RequestPassword from "./pages/RequestPassword/RequestPassword.tsx";
+
 import Dashboard from "./pages/Dashboard/Dashboard.tsx";
-import ChangePassword from "./pages/ChangePassword/ChangePassword.tsx";
+
+import PageLogin from "@/pages/Login/PageLogin.tsx";
+import {Box} from "@chakra-ui/react";
+import PageRegister from "@/pages/NewUser/PageRegister.tsx";
+import PageForgotPassword from "@/pages/ForgotPassword/PageForgotPassword.tsx";
+import PageResetPassword from "@/pages/ChangePassword/PageResetPassword.tsx";
+
 
 function App() {
     return (
-        <div className="app">
+        <Box h={"100vh"}>
+            <BrowserRouter>
+                <Routes>
 
-            <main className="h-full">
-
-                <BrowserRouter>
-                    <Header title={"FinFin"}/>
-                    <Routes>
-
-                        <Route index path={"/"} element={<Login/>}></Route>
-                        <Route path={"auth"}>
-                            <Route path="login" element={<Login/>}></Route>
-                            <Route path="signin" element={<NewUser/>}></Route>
-                            <Route path="forgot" element={<RequestPassword/>}></Route>
-                            <Route path="reset" element={<ChangePassword/>}></Route>
-                        </Route>
+                    <Route index path={"/"} element={<PageLogin/>}></Route>
+                    <Route path={"auth"}>
+                        <Route path="login" element={<PageLogin/>}></Route>
+                        <Route path="signin" element={<PageRegister/>}></Route>
+                        <Route path="forgot" element={<PageForgotPassword/>}></Route>
+                        <Route path="reset" element={<PageResetPassword/>}></Route>
+                    </Route>
 
 
-                        <Route path="dash" element={<Dashboard/>}>
+                    <Route path="dash" element={<Dashboard/>}>
 
-                        </Route>
-                    </Routes>
-                </BrowserRouter>
-            </main>
-        </div>
+                    </Route>
+                </Routes>
+            </BrowserRouter>
+        </Box>
     );
 }
 

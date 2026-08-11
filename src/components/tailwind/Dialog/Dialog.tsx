@@ -1,5 +1,5 @@
-import Icon from "../Icons/Icon.tsx";
-import "../../styles/TextHeadings.css"
+import Icon from "@/components/tailwind/Icons/Icon.tsx";
+import "../../../styles/TextHeadings.css"
 
 interface DialogTypes {
     message: string,

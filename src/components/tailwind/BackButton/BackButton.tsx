@@ -1,4 +1,4 @@
-import BackArrow from "../Icons/Back.tsx";
+import BackArrow from "@/components/tailwind/Icons/Back.tsx";
 import {type NavigateOptions, useNavigate} from "react-router-dom";
 
 interface BackButtonTypes extends NavigateOptions {

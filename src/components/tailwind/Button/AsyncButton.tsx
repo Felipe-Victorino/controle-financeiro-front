@@ -1,6 +1,6 @@
 import "./Button.css";
 import React from "react";
-import LoadingThrobber from "../LoadingThrobber/LoadingThrobber.tsx";
+import LoadingThrobber from "@/components/tailwind/LoadingThrobber/LoadingThrobber.tsx";
 
 interface AsyncButtonTypes extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     type: "submit" | "reset" | "button" | undefined,

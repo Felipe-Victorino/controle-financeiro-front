@@ -1,12 +1,13 @@
 import React, {useState} from "react";
-import "./input.css"
-import "../../styles/inputs.css"
+import "./Input.css"
+import "../../../styles/Inputs.css"
 
 interface PasswordInputType extends React.InputHTMLAttributes<HTMLInputElement> {
     label: string,
     id: string,
     name: string,
     value: string,
+
     onChanged: (e: React.ChangeEvent<HTMLInputElement>) => void,
 
 
@@ -45,13 +46,13 @@ const PasswordInput: React.FC<PasswordInputType> = ({label, id, name, value, onC
             <span className={"flex flex-row items-center justify-end "}>
 
                 <input
-                    id={"visibility"}
+                    id={"visibility" + name}
                     type={"checkbox"}
                     className={"w-4 h-4 accent-emerald-500 select-none"}
                     onClick={togglePassword}
                 />
                 <label
-                    htmlFor={"visibility"}
+                    htmlFor={"visibility" + name}
                     className={"input-label"}
                 >
                 Mostrar senha

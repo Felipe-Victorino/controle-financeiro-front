@@ -1,6 +1,6 @@
-import "../../styles/TextHeadings.css"
+import "../../../styles/TextHeadings.css"
 import "./Header.css"
-import AuthNavbar from "../Navbar/AuthNavbar.tsx";
+import AuthNavbar from "@/components/tailwind/Navbar/AuthNavbar.tsx";
 
 interface HeaderTypes {
     title: string,
