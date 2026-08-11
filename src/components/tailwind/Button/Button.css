@@ -1,5 +1,0 @@
-@reference "tailwindcss";
-
-.button-main {
-    @apply inline-flex justify-center bg-emerald-500 dark:bg-emerald-800 rounded font-bold text-white p-3 hover:bg-emerald-600 dark:hover:bg-emerald-700 ;
-}

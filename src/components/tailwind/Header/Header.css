@@ -1,5 +1,0 @@
-@reference "tailwindcss";
-
-.header {
-    @apply flex sticky bg-emerald-500 dark:bg-emerald-900  flex-row justify-between items-center px-6;
-}
