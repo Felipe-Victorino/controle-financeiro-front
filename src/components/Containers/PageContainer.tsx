@@ -1,6 +1,6 @@
 import {Box, VStack} from "@chakra-ui/react";
 import type {ReactNode} from "react";
-import PageHeader from "@/components/Header.tsx";
+import PageHeader from "@/components/Header/Header.tsx";
 
 
 const PageContainer = ({children}: { children: ReactNode }) => {
