@@ -1,9 +1,4 @@
 @layer reset, tokens, theme, base, recipes, components, utilities;
-@import "tailwindcss";
-
-* {
-    box-sizing: border-box;
-}
 
 body {
     margin: 0;

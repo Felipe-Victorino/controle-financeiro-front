@@ -1,5 +1,0 @@
-@import "tailwindcss";
-
-.app {
-    @apply bg-emerald-100 dark:bg-mist-900 h-screen w-screen min-h-screen min-w-screen flex flex-col;
-}
