@@ -17,4 +17,5 @@ export interface ForgotValues {
 export interface ResetValues {
     token: string,
     newPasswd: string
+    confirmPasswd: string
 }
