@@ -1,73 +1,60 @@
-import PageContainer from "@/components/containers/PageContainer.tsx";
-import {Button, Field, Flex, Heading, Input, Link as ChakraLink, Stack, VStack} from "@chakra-ui/react";
+import PageContainer from "@/components/Containers/PageContainer.tsx";
+import FormContainer from "@/components/Containers/FormContainer.tsx";
+import {Button, Field, Fieldset, Flex, Heading, Input, Stack} from "@chakra-ui/react";
 import React, {useState} from "react";
-import {PasswordInput} from "@/components/ui/password-input.tsx";
+import type {ForgotValues} from "@/types/Requests.ts";
 import type {AxiosResponse} from "axios";
 import type {NetworkErrorResponse} from "@/types/ServerErrors.ts";
-import {Link} from "react-router-dom";
-
-import AuthService from "@/services/AuthService.ts";
 import {Toaster, toaster} from "@/components/ui/toaster.tsx";
-import FormContainer from "@/components/containers/FormContainer.tsx";
+import {authService} from "@/services/AuthService.ts";
+import {useNavigate} from "react-router-dom";
 
-interface LoginValues {
-    email: string,
-    passwd: string,
-}
 
-const authService: AuthService = new AuthService();
-
-const PageLogin = () => {
+const PageForgotPassword = () => {
     return (
         <PageContainer>
             <FormContainer>
 
-                <Flex gap={"12"} direction={"column"} justify={"center"} align={"start"} padding={"4"}>
-                    <VStack>
-                        <Heading size={"6xl"}>
-                            FinFin
-                        </Heading>
-                        <Heading>
-                            Logar no serviço
-                        </Heading>
-                    </VStack>
-
-                </Flex>
-
                 <Flex gap={"3"} direction={"column"} justify={"center"} align={"start"}>
-                    <PageLoginForm/>
-                    <ChakraLink asChild>
-                        <Link to={"/auth/forgot"}>Esqueci minha senha</Link>
-                    </ChakraLink>
-                    <ChakraLink>
-                        <Link to={"/auth/signin"}>Criar uma conta</Link>
-                    </ChakraLink>
+                    <Fieldset.Root>
+                        <Fieldset.Legend>
+                            <Heading>
+                                Esqueci minha senha:
+                            </Heading>
+
+                        </Fieldset.Legend>
+                        <Fieldset.HelperText>
+                            Por favor, insira no campo abaixo o email associado a sua conta, para podermos verificar sua
+                            identidade
+                        </Fieldset.HelperText>
+                        <Fieldset.Content>
+                            <ForgotPasswordForm/>
+                        </Fieldset.Content>
+                    </Fieldset.Root>
 
 
                 </Flex>
 
 
             </FormContainer>
-
         </PageContainer>
     )
 }
 
-const PageLoginForm = () => {
-    const [user, setUser] = useState<LoginValues>(
+const ForgotPasswordForm = () => {
+    const navigate = useNavigate();
+    const [user, setUser] = useState<ForgotValues>(
         {
-            email: '',
-            passwd: '',
+            email: "",
         }
     )
 
     const [error, setError] = useState(
         {
             email: false,
-            passwd: false,
         }
     )
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(false)
     const [success, setSuccess] = useState("")
     const [errorResponse, setErrorResponse] = useState<NetworkErrorResponse>(
         {
@@ -78,37 +65,38 @@ const PageLoginForm = () => {
         }
     )
 
-    const verifyFields: () => boolean = () => {
+    const verifyFields = () => {
         let hasError: boolean = false;
         const errors = {
-            email: false,
-            passwd: false
+            email: false
         }
-
-        if (user.email == '') {
-            hasError = true;
+        if (user.email == "") {
             errors.email = true
-        }
-
-        if (user.passwd == '') {
             hasError = true;
-            errors.passwd = true
         }
-
         setError(errors)
         return hasError;
     }
 
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setUser({...user, [e.target.name]: e.target.value});
+    }
+
     const onSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault()
+
         if (verifyFields()) {
             return;
         }
+
         setLoading(true);
         setTimeout(async () => {
             try {
                 const response = await authService.loginUser(user) as AxiosResponse;
                 setSuccess(response.data)
+                if (success != "") {
+                    navigate("/auth/reset")
+                }
 
             } catch (e: unknown) {
                 const err = e as NetworkErrorResponse;
@@ -126,19 +114,14 @@ const PageLoginForm = () => {
                 setLoading(false)
             }
         }, 500)
-
     }
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setUser({...user, [e.target.name]: e.target.value});
-    }
 
     return (
         <form>
-            <Stack gap="4" align="flex-start" maxW="sm">
-
+            <Stack gap="4" align="flex-start" maxW="100%">
                 <Field.Root invalid={error.email} required>
-                    <Field.Label>Email <Field.RequiredIndicator/></Field.Label>
+                    <Field.Label>Token:<Field.RequiredIndicator/></Field.Label>
                     <Input
                         value={user.email}
                         name={"email"}
@@ -146,17 +129,6 @@ const PageLoginForm = () => {
                             handleChange(e)
                         }}/>
                     <Field.ErrorText>Email necessário</Field.ErrorText>
-                </Field.Root>
-
-                <Field.Root invalid={error.passwd} required>
-                    <Field.Label>Senha <Field.RequiredIndicator/></Field.Label>
-                    <PasswordInput
-                        value={user.passwd}
-                        name={"passwd"}
-                        onChange={(e) => {
-                            handleChange(e)
-                        }}/>
-                    <Field.ErrorText>Senha necessária</Field.ErrorText>
                 </Field.Root>
 
                 <Button
@@ -172,4 +144,4 @@ const PageLoginForm = () => {
     )
 }
 
-export default PageLogin;
+export default PageForgotPassword

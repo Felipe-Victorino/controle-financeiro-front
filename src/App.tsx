@@ -4,11 +4,11 @@ import {BrowserRouter, Route, Routes} from "react-router-dom";
 
 import Dashboard from "./pages/Dashboard/Dashboard.tsx";
 
-import PageLogin from "@/pages/Login/PageLogin.tsx";
+import PageLogin from "@/pages/Auth/Login/PageLogin.tsx";
 import {Box} from "@chakra-ui/react";
-import PageRegister from "@/pages/NewUser/PageRegister.tsx";
-import PageForgotPassword from "@/pages/ForgotPassword/PageForgotPassword.tsx";
-import PageResetPassword from "@/pages/ChangePassword/PageResetPassword.tsx";
+import PageRegister from "@/pages/Auth/NewUser/PageRegister.tsx";
+import PageForgotPassword from "@/pages/Auth/ForgotPassword/PageForgotPassword.tsx";
+import PageResetPassword from "@/pages/Auth/ChangePassword/PageResetPassword.tsx";
 
 
 function App() {

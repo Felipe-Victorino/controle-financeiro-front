@@ -1,5 +1,0 @@
-@reference "tailwindcss";
-
-.forgot-passwd {
-  @apply dark:text-emerald-200 text-emerald-800 font-medium text-pretty p-1 hover:underline;
-}

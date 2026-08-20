@@ -1,12 +1,14 @@
-import PageContainer from "@/components/containers/PageContainer.tsx";
-import {Button, Field, Flex, Heading, Input, Stack, VStack} from "@chakra-ui/react";
+import PageContainer from "@/components/Containers/PageContainer.tsx";
+import {Button, Field, Fieldset, Flex, Heading, Input, VStack} from "@chakra-ui/react";
 
-import React, {useState} from "react";
+import React, {useMemo, useState} from "react";
 import type {NetworkErrorResponse} from "@/types/ServerErrors.ts";
-import {PasswordInput} from "@/components/ui/password-input.tsx";
+import {PasswordInput, PasswordStrengthMeter} from "@/components/ui/password-input.tsx";
 import {toaster, Toaster} from "@/components/ui/toaster.tsx";
-import AuthService from "@/services/AuthService.ts";
-import FormContainer from "@/components/containers/FormContainer.tsx";
+import {authService} from "@/services/AuthService.ts";
+import FormContainer from "@/components/Containers/FormContainer.tsx";
+import {useNavigate} from "react-router-dom";
+import {type Options, passwordStrength} from "check-password-strength";
 
 interface RegisterValues {
     name: string,
@@ -14,8 +16,6 @@ interface RegisterValues {
     passwd: string
     passwdConfirm: string
 }
-
-const authService: AuthService = new AuthService();
 
 const PageRegister = () => {
     return (
@@ -35,7 +35,19 @@ const PageRegister = () => {
 
                 </Flex>
                 <Flex gap={"3"} direction={"column"} justify={"center"} align={"start"}>
-                    <PageRegisterForm/>
+                    <Fieldset.Root>
+                        <Fieldset.Legend>
+
+                            Criação de conta
+                        </Fieldset.Legend>
+                        <Fieldset.HelperText>
+                            Preencha os campos abaixo para realizar o cadastro.
+                        </Fieldset.HelperText>
+                        <Fieldset.Content>
+                            <PageRegisterForm/>
+                        </Fieldset.Content>
+                    </Fieldset.Root>
+
 
                 </Flex>
 
@@ -46,8 +58,37 @@ const PageRegister = () => {
     )
 }
 
-const PageRegisterForm = () => {
 
+const strengthOptions: Options<string> = [
+    {
+        id: 1,
+        value: "Fraca",
+        minDiversity: 0,
+        minLength: 0
+    },
+    {
+        id: 2,
+        value: "Medíocre",
+        minDiversity: 2,
+        minLength: 6
+    },
+    {
+        id: 3,
+        value: "Forte",
+        minDiversity: 3,
+        minLength: 8
+    },
+    {
+        id: 4,
+        value: "Muito forte",
+        minDiversity: 4,
+        minLength: 10
+    },
+]
+
+
+const PageRegisterForm = () => {
+    const navigate = useNavigate()
     const [user, setUser] = useState<RegisterValues>(
         {
             name: '',
@@ -65,7 +106,13 @@ const PageRegisterForm = () => {
             passwdConfirm: false
         }
     )
-    const [strength, setStrength] = useState(0)
+
+    const strength = useMemo(() => {
+        if (!user.passwd) return 0
+        const result = passwordStrength(user.passwd, strengthOptions)
+        return result.id
+    }, [user.passwd])
+
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState("")
     const [errorResponse, setErrorResponse] = useState<NetworkErrorResponse>(
@@ -82,7 +129,7 @@ const PageRegisterForm = () => {
         if (validateEmptyFields()) {
             return;
         }
-        isStrongPassword(user.passwd)
+
         if (strength == 0) {
             return;
         }
@@ -92,8 +139,13 @@ const PageRegisterForm = () => {
         setTimeout(
             async () => {
                 try {
-                    await authService.registerNewUser(user)
+                    const success = await authService.registerNewUser(user)
+
+                    if (success) {
+                        navigate("/auth/login");
+                    }
                     setSuccess('Cadastro realizado com sucesso.');
+
 
                 } catch (e: unknown) {
                     const err = e as NetworkErrorResponse;
@@ -145,46 +197,19 @@ const PageRegisterForm = () => {
         return hasError;
     };
 
-    const isStrongPassword = (password: string) => {
-
-        let strength: number = 0;
-
-        if (password.length >= 8) {
-            strength++;
-        }
-
-        if (/[A-Z]+/.test(password)) {
-            strength++;
-        }
-
-        if (/[0-9]+/.test(password)) {
-            strength++;
-        }
-
-        if (/[!@#$&*%]+/.test(password)) {
-            strength++;
-        }
-
-        if (password.length < 8) {
-            strength = 0;
-        }
-
-        setStrength(strength)
-    };
-
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setUser({...user, [e.target.name]: e.target.value});
     }
 
     return (
         <form>
-            <Stack gap="4" align="flex-start" maxW="sm">
+            <Flex gap="4" align="flex-start" justify={"stretch"} direction={"column"}>
 
                 <Field.Root invalid={error.name} required>
                     <Field.Label>Nome:<Field.RequiredIndicator/></Field.Label>
                     <Input
                         value={user.name}
-                        name={"email"}
+                        name={"name"}
                         onChange={(e) => {
                             handleChange(e)
                         }}/>
@@ -211,7 +236,10 @@ const PageRegisterForm = () => {
                             handleChange(e)
                         }}/>
                     <Field.ErrorText>Senha necessária</Field.ErrorText>
+
                 </Field.Root>
+
+                <PasswordStrengthMeter value={strength} w={"100%"}/>
 
                 <Field.Root invalid={error.passwdConfirm} required>
                     <Field.Label>Confirme a senha: <Field.RequiredIndicator/></Field.Label>
@@ -231,7 +259,7 @@ const PageRegisterForm = () => {
                     onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => (onSubmit(e))}>
                     Entrar
                 </Button>
-            </Stack>
+            </Flex>
             <Toaster/>
         </form>
     )
