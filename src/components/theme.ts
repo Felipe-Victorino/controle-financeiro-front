@@ -2,8 +2,12 @@ import {createSystem, defaultConfig, defineConfig} from "@chakra-ui/react";
 
 const config = defineConfig({
     globalCss: {
+        "*": {
+            boxSizing: "border-box"
+        },
         html: {
-            colorPalette: "teal",
+            colorPalette: "cyan",
+            scrollBehavior: "smooth",
         },
     },
 })
