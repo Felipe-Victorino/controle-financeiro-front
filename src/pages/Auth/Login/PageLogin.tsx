@@ -1,15 +1,29 @@
 import PageContainer from "@/components/Containers/PageContainer.tsx";
-import {Button, Field, Fieldset, Flex, Heading, Input, Link as ChakraLink, Stack, VStack} from "@chakra-ui/react";
+import {
+    Button,
+    Field,
+    Fieldset,
+    Flex,
+    Heading,
+    HStack,
+    Icon,
+    Input,
+    Link as ChakraLink,
+    Stack,
+    VStack
+} from "@chakra-ui/react";
 import React, {useState} from "react";
 import {PasswordInput} from "@/components/ui/password-input.tsx";
 import type {AxiosResponse} from "axios";
 import type {NetworkErrorResponse} from "@/types/ServerErrors.ts";
 import {Link, useNavigate} from "react-router-dom";
-import type {LoginValues} from "../../../types/Requests.ts";
+import type {LoginValues} from "@/types/Requests.ts";
 
 import {Toaster, toaster} from "@/components/ui/toaster.tsx";
 import FormContainer from "@/components/Containers/FormContainer.tsx";
-import {authService} from "@/services/AuthService.ts";
+import AuthService from "@/services/AuthService.ts";
+import {GiDolphin} from "react-icons/gi";
+import type {AuthLoginResponse} from "@/types/ServerResponse.ts";
 
 
 const PageLogin = () => {
@@ -19,9 +33,15 @@ const PageLogin = () => {
 
                 <Flex gap={"12"} direction={"column"} justify={"center"} align={"start"} padding={"4"}>
                     <VStack>
-                        <Heading size={"6xl"}>
-                            FinFin
-                        </Heading>
+                        <HStack>
+                            <Icon asChild size={"2xl"}>
+                                <GiDolphin/>
+                            </Icon>
+                            <Heading size={"4xl"}>
+                                FinFin
+                            </Heading>
+                        </HStack>
+
                         <Heading>
                             Logar no serviço
                         </Heading>
@@ -39,7 +59,7 @@ const PageLogin = () => {
                     <ChakraLink asChild>
                         <Link to={"/auth/forgot"}>Esqueci minha senha</Link>
                     </ChakraLink>
-                    <ChakraLink>
+                    <ChakraLink asChild>
                         <Link to={"/auth/signin"}>Criar uma conta</Link>
                     </ChakraLink>
 
@@ -69,7 +89,6 @@ const PageLoginForm = () => {
         }
     )
     const [loading, setLoading] = useState(false);
-    const [success, setSuccess] = useState("")
     const [errorResponse, setErrorResponse] = useState<NetworkErrorResponse>(
         {
             status: 400,
@@ -108,11 +127,13 @@ const PageLoginForm = () => {
         setLoading(true);
         setTimeout(async () => {
             try {
-                const response = await authService.loginUser(user) as AxiosResponse;
-                setSuccess(response.data)
+                const response = await AuthService.instance.loginUser(user) as AxiosResponse;
 
-                if (success != "") {
-                    sessionStorage.setItem("login", "true")
+                const data = response.data as AuthLoginResponse;
+
+                if (response) {
+                    localStorage.setItem("name", data.name)
+                    localStorage.setItem("login", "true")
                     navigate("/dashboard");
                 }
 
