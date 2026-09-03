@@ -1,81 +1,19 @@
 # Sistema de Controle Financeiro
 
-## Tecnologias
-
-Feito com Vite, Tailwind, React e Typescript.
+Feito com Vite, Chakra UI, React e Typescript.
 =======
 
-# Finances Management System - FinFin
+# FinFin: Sistema de gerenciamento de finanças
 
-This repository conteins React and Typescript code built for an interface that connects to a remote backend, therefore
-it will not function without that connection established.
+Esse repositório contém código React e Typescript, que em conjunto criam uma interface de usuário que se conecta a um
+servidor remoto, portanto, a interface não irá operar de forma correta sem essa conexão estabelecida.
 
-## React Compiler
+This repository contains React and Typescript code built for an user interface that connects to a remote backend,
+therefore
+it will not function properly without that connection established.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it,
-see [this documentation](https://react.dev/learn/react-compiler/installation).
+Para o link de configuração do backend correspondente, veja o link abaixo:
 
-## Expanding the ESLint configuration
+For the correspondent backend configuration, see the link below:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-    globalIgnores(['dist']),
-    {
-        files: ['**/*.{ts,tsx}'],
-        extends: [
-            // Other configs...
-
-            // Remove tseslint.configs.recommended and replace with this
-            tseslint.configs.recommendedTypeChecked,
-            // Alternatively, use this for stricter rules
-            tseslint.configs.strictTypeChecked,
-            // Optionally, add this for stylistic rules
-            tseslint.configs.stylisticTypeChecked,
-
-            // Other configs...
-        ],
-        languageOptions: {
-            parserOptions: {
-                project: ['./tsconfig.node.json', './tsconfig.app.json'],
-                tsconfigRootDir: import.meta.dirname,
-            },
-            // other options...
-        },
-    },
-])
-```
-
-You can also
-install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x)
-and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom)
-for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-    globalIgnores(['dist']),
-    {
-        files: ['**/*.{ts,tsx}'],
-        extends: [
-            // Other configs...
-            // Enable lint rules for React
-            reactX.configs['recommended-typescript'],
-            // Enable lint rules for React DOM
-            reactDom.configs.recommended,
-        ],
-        languageOptions: {
-            parserOptions: {
-                project: ['./tsconfig.node.json', './tsconfig.app.json'],
-                tsconfigRootDir: import.meta.dirname,
-            },
-            // other options...
-        },
-    },
-])
-```
-
+https://github.com/Felipe-Victorino/controle-financeiro-back
