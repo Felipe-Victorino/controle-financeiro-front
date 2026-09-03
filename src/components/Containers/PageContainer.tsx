@@ -6,11 +6,20 @@ import PageHeader from "@/components/Header/Header.tsx";
 const PageContainer = ({children}: { children: ReactNode }) => {
 
     return (
-        <VStack h={"100%"}>
-            <PageHeader/>
-            <Box w={"100%"} h={"100%"}>
-                {children}
-            </Box>
+        <VStack
+            justify={"center"}
+            w={{base: "100%"}}
+            h={"100%"}
+        >
+            <VStack w={{base: "100%", md: "70%"}} h={"100%"} gap={"5%"}>
+                <PageHeader/>
+                <Box h={"100%"} w={"100%"}>
+                    {children}
+                </Box>
+
+
+            </VStack>
+
 
         </VStack>
     )

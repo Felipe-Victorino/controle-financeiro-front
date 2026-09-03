@@ -3,13 +3,16 @@ import type {ReactNode} from "react";
 
 interface DashStructure {
     dashHeader: ReactNode
-    children: ReactNode[]
+    children?: ReactNode
 
 }
 
 const DashboardContainer = ({dashHeader, children}: DashStructure) => {
     return (
-        <Stack p={"1%"} justify={"stretch"} align={"stretch"}>
+        <Stack
+            justify={"stretch"}
+            align={"stretch"}
+        >
             <Box>
                 {dashHeader}
             </Box>
