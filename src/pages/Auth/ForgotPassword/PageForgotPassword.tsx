@@ -6,8 +6,9 @@ import type {ForgotValues} from "@/types/Requests.ts";
 import type {AxiosResponse} from "axios";
 import type {NetworkErrorResponse} from "@/types/ServerErrors.ts";
 import {Toaster, toaster} from "@/components/ui/toaster.tsx";
-import {authService} from "@/services/AuthService.ts";
+import AuthService from "@/services/AuthService.ts";
 import {useNavigate} from "react-router-dom";
+import type {AuthForgotResponse} from "@/types/ServerResponse.ts";
 
 
 const PageForgotPassword = () => {
@@ -55,7 +56,6 @@ const ForgotPasswordForm = () => {
         }
     )
     const [loading, setLoading] = useState(false)
-    const [success, setSuccess] = useState("")
     const [errorResponse, setErrorResponse] = useState<NetworkErrorResponse>(
         {
             status: 400,
@@ -82,7 +82,7 @@ const ForgotPasswordForm = () => {
         setUser({...user, [e.target.name]: e.target.value});
     }
 
-    const onSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const onSubmit = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault()
 
         if (verifyFields()) {
@@ -90,30 +90,31 @@ const ForgotPasswordForm = () => {
         }
 
         setLoading(true);
-        setTimeout(async () => {
-            try {
-                const response = await authService.loginUser(user) as AxiosResponse;
-                setSuccess(response.data)
-                if (success != "") {
-                    navigate("/auth/reset")
-                }
 
-            } catch (e: unknown) {
-                const err = e as NetworkErrorResponse;
-                console.log(err)
-                setErrorResponse(err)
-                toaster.create(
-                    {
-                        type: "error",
-                        title: errorResponse.message,
-                        duration: 3000
-                    }
-                )
-
-            } finally {
-                setLoading(false)
+        try {
+            const response = await AuthService.instance.requestResetCode(user.email) as AxiosResponse;
+            const message = response.data as AuthForgotResponse
+            console.log(message)
+            if (response) {
+                navigate("/auth/reset")
             }
-        }, 500)
+
+        } catch (e: unknown) {
+            const err = e as NetworkErrorResponse;
+            console.log(err)
+            setErrorResponse(err)
+            toaster.create(
+                {
+                    type: "error",
+                    title: errorResponse.message,
+                    duration: 3000
+                }
+            )
+
+        } finally {
+            setLoading(false)
+        }
+
     }
 
 
@@ -121,7 +122,7 @@ const ForgotPasswordForm = () => {
         <form>
             <Stack gap="4" align="flex-start" maxW="100%">
                 <Field.Root invalid={error.email} required>
-                    <Field.Label>Token:<Field.RequiredIndicator/></Field.Label>
+                    <Field.Label>Email:<Field.RequiredIndicator/></Field.Label>
                     <Input
                         value={user.email}
                         name={"email"}
