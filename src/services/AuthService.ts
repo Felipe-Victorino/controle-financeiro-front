@@ -3,10 +3,21 @@ import type {AxiosResponse} from "axios";
 
 class AuthService extends BaseService {
 
-    constructor() {
+    static #instance: AuthService;
+
+    private constructor() {
         super('/auth');
 
     }
+
+    public static get instance(): AuthService {
+        if (!AuthService.#instance) {
+            this.#instance = new AuthService();
+        }
+
+        return AuthService.instance;
+    }
+
 
     async requestResetCode(email: string): Promise<AxiosResponse> {
         return await this.insertIn("/forgot-password", {"email": email});
@@ -25,6 +36,5 @@ class AuthService extends BaseService {
     }
 }
 
-export const authService: AuthService = new AuthService();
 
 export default AuthService;
