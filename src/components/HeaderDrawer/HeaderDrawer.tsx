@@ -1,15 +1,39 @@
-import {Button, CloseButton, Drawer, For, Icon, Portal, Stack} from "@chakra-ui/react";
-import {MdHome, MdLogout, MdMenu, MdPerson, MdSwapHoriz} from "react-icons/md";
+import {
+    AvatarFallback,
+    AvatarGroup,
+    AvatarRoot,
+    Button,
+    CloseButton,
+    Drawer,
+    For,
+    HStack,
+    Icon,
+    Portal,
+    Stack
+} from "@chakra-ui/react";
+import {MdCategory, MdHome, MdLogout, MdMenu, MdSettings, MdSwapHoriz, MdWallet} from "react-icons/md";
 import {useNavigate} from "react-router-dom";
+import React from "react";
 
 const HeaderDrawer = () => {
     const navigate = useNavigate();
+
+    const username = localStorage.getItem("name") || "Wayne";
+
     const navLinks = [
-        {name: "Página Inicial", link: "/dash", icon: <MdHome/>},
-        {name: "Perfil", link: "/user", icon: <MdPerson/>},
-        {name: "Transações", link: "/transactions", icon: <MdSwapHoriz/>}
+        {name: "Página Inicial", link: "/dashboard", icon: <MdHome/>},
+        {name: "Categorias", link: "/categories", icon: <MdCategory/>},
+        {name: "Carteiras", link: "/wallets", icon: <MdWallet/>},
+        {name: "Transações", link: "/transactions", icon: <MdSwapHoriz/>},
+        {name: "Configurações", link: "/settings", icon: <MdSettings/>}
     ]
 
+    const logOut = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        e.preventDefault();
+        localStorage.clear();
+        sessionStorage.clear();
+        navigate("/");
+    }
 
     return (
         <Drawer.Root>
@@ -33,12 +57,16 @@ const HeaderDrawer = () => {
                                     {(item, index) => (
                                         <Button
                                             w={"100%"}
+                                            size={"xl"}
                                             key={index}
                                             onClick={() => navigate(item.link)}
                                             variant={"ghost"}
                                             justifyContent={"start"}
                                         >
-                                            {item.icon}
+                                            <Icon size={"lg"}>
+                                                {item.icon}
+                                            </Icon>
+
                                             {item.name}
                                         </Button>
                                     )}
@@ -48,12 +76,48 @@ const HeaderDrawer = () => {
                         </Drawer.Body>
                         <Drawer.Footer>
 
-                            <Button
+                            <HStack
                                 w={"100%"}
+                                gap={"2em"}
+                                justify={"space-between"}
 
-                                variant="surface">
-                                <MdLogout/>Sair
-                            </Button>
+                            >
+
+                                <Button
+                                    variant="surface"
+                                    onClick={
+                                        (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+                                            e.preventDefault()
+                                            navigate("/user")
+                                        }
+                                    }
+                                >
+
+                                    <HStack w={"100%"} justify={"flex-start"}>
+
+
+                                        <AvatarGroup>
+                                            <AvatarRoot size={"xs"}>
+                                                <AvatarFallback/>
+                                            </AvatarRoot>
+                                        </AvatarGroup>
+
+
+                                        {username}
+
+
+                                    </HStack>
+                                </Button>
+
+
+                                <Button
+                                    onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => logOut(e)}
+
+                                    variant="surface">
+                                    <MdLogout/>Sair
+                                </Button>
+                            </HStack>
+
 
                         </Drawer.Footer>
                         <Drawer.CloseTrigger asChild>
