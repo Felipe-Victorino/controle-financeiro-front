@@ -5,6 +5,7 @@ export interface AuthForgotResponse {
 
 export interface AuthLoginResponse {
     expiresIn: string,
+    name: string,
 }
 
 export interface AuthRegisterResponse {
