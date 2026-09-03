@@ -6,8 +6,9 @@ import type {ResetValues} from "@/types/Requests.ts";
 import {PasswordInput} from "@/components/ui/password-input.tsx";
 import type {NetworkErrorResponse} from "@/types/ServerErrors.ts";
 import {Toaster, toaster} from "@/components/ui/toaster.tsx";
-import {authService} from "@/services/AuthService.ts";
+import AuthService from "@/services/AuthService.ts";
 import {useNavigate} from "react-router-dom";
+import type {AuthResetResponse} from "@/types/ServerResponse.ts";
 
 
 const PageResetPassword = () => {
@@ -59,7 +60,6 @@ const ResetPasswordForm = () => {
         }
     )
     const [loading, setLoading] = useState(false);
-    const [success, setSuccess] = useState("")
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setUser({...user, [e.target.name]: e.target.value});
@@ -78,7 +78,7 @@ const ResetPasswordForm = () => {
             hasError = true;
         }
 
-        if (user.token == "") {
+        if (user.newPasswd == "") {
             errors.newPasswd = true
             hasError = true;
         }
@@ -91,7 +91,7 @@ const ResetPasswordForm = () => {
         return hasError;
     }
 
-    const onSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const onSubmit = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault()
 
         if (verifyFields()) {
@@ -99,34 +99,35 @@ const ResetPasswordForm = () => {
         }
 
         setLoading(true);
-        setTimeout(async () => {
-            try {
-                const response = await authService.loginUser(user);
-                setSuccess(response.data)
-                toaster.create({
-                    type: "success",
-                    title: success,
+
+        try {
+            const response = await AuthService.instance.resetPassword(user);
+            const message = response.data as AuthResetResponse
+            console.log(message)
+            toaster.create({
+                type: "success",
+                title: message.message,
+                duration: 3000
+            })
+            setTimeout(() => {
+                navigate("/auth/login")
+            }, 1000)
+        } catch (e: unknown) {
+            const err = e as NetworkErrorResponse;
+            console.log(err)
+
+            toaster.create(
+                {
+                    type: "error",
+                    title: err.message,
                     duration: 3000
-                })
-                setTimeout(() => {
-                    navigate("/auth/login")
-                }, 3500)
-            } catch (e: unknown) {
-                const err = e as NetworkErrorResponse;
-                console.log(err)
+                }
+            )
 
-                toaster.create(
-                    {
-                        type: "error",
-                        title: err.message,
-                        duration: 3000
-                    }
-                )
+        } finally {
+            setLoading(false)
+        }
 
-            } finally {
-                setLoading(false)
-            }
-        }, 500)
     }
 
 
