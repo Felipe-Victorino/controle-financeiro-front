@@ -5,7 +5,7 @@ import React, {useMemo, useState} from "react";
 import type {NetworkErrorResponse} from "@/types/ServerErrors.ts";
 import {PasswordInput, PasswordStrengthMeter} from "@/components/ui/password-input.tsx";
 import {toaster, Toaster} from "@/components/ui/toaster.tsx";
-import {authService} from "@/services/AuthService.ts";
+import AuthService from "@/services/AuthService.ts";
 import FormContainer from "@/components/Containers/FormContainer.tsx";
 import {useNavigate} from "react-router-dom";
 import {type Options, passwordStrength} from "check-password-strength";
@@ -35,18 +35,8 @@ const PageRegister = () => {
 
                 </Flex>
                 <Flex gap={"3"} direction={"column"} justify={"center"} align={"start"}>
-                    <Fieldset.Root>
-                        <Fieldset.Legend>
 
-                            Criação de conta
-                        </Fieldset.Legend>
-                        <Fieldset.HelperText>
-                            Preencha os campos abaixo para realizar o cadastro.
-                        </Fieldset.HelperText>
-                        <Fieldset.Content>
-                            <PageRegisterForm/>
-                        </Fieldset.Content>
-                    </Fieldset.Root>
+                    <PageRegisterForm/>
 
 
                 </Flex>
@@ -103,7 +93,8 @@ const PageRegisterForm = () => {
             name: false,
             email: false,
             passwd: false,
-            passwdConfirm: false
+            passwdConfirm: false,
+            notEqual: false
         }
     )
 
@@ -139,7 +130,7 @@ const PageRegisterForm = () => {
         setTimeout(
             async () => {
                 try {
-                    const success = await authService.registerNewUser(user)
+                    const success = await AuthService.instance.registerNewUser(user)
 
                     if (success) {
                         navigate("/auth/login");
@@ -174,7 +165,8 @@ const PageRegisterForm = () => {
             name: false,
             email: false,
             passwd: false,
-            passwdConfirm: false
+            passwdConfirm: false,
+            notEqual: false
         }
         if (user.name == '') {
             hasError = true;
@@ -193,6 +185,12 @@ const PageRegisterForm = () => {
             hasError = true;
             errors.passwdConfirm = true;
         }
+
+        if (user.passwdConfirm != user.passwd) {
+            hasError = true;
+            errors.notEqual = true;
+        }
+
         setError(errors);
         return hasError;
     };
@@ -203,63 +201,80 @@ const PageRegisterForm = () => {
 
     return (
         <form>
-            <Flex gap="4" align="flex-start" justify={"stretch"} direction={"column"}>
+            <Fieldset.Root invalid={error.notEqual}>
+                <Fieldset.Legend>
+                    <Heading>
+                        Criação de conta
+                    </Heading>
 
-                <Field.Root invalid={error.name} required>
-                    <Field.Label>Nome:<Field.RequiredIndicator/></Field.Label>
-                    <Input
-                        value={user.name}
-                        name={"name"}
-                        onChange={(e) => {
-                            handleChange(e)
-                        }}/>
-                    <Field.ErrorText>Email necessário</Field.ErrorText>
-                </Field.Root>
+                </Fieldset.Legend>
+                <Fieldset.HelperText>
+                    Preencha os campos abaixo para criar uma conta nova
+                </Fieldset.HelperText>
+                <Fieldset.Content>
+                    <Flex gap="4" align="flex-start" justify={"stretch"} direction={"column"}>
 
-                <Field.Root invalid={error.email} required>
-                    <Field.Label>Email:<Field.RequiredIndicator/></Field.Label>
-                    <Input
-                        value={user.email}
-                        name={"email"}
-                        onChange={(e) => {
-                            handleChange(e)
-                        }}/>
-                    <Field.ErrorText>Email necessário</Field.ErrorText>
-                </Field.Root>
+                        <Field.Root invalid={error.name} required>
+                            <Field.Label>Nome:<Field.RequiredIndicator/></Field.Label>
+                            <Input
+                                value={user.name}
+                                name={"name"}
+                                onChange={(e) => {
+                                    handleChange(e)
+                                }}/>
+                            <Field.ErrorText>Email necessário</Field.ErrorText>
+                        </Field.Root>
 
-                <Field.Root invalid={error.passwd} required>
-                    <Field.Label>Senha:<Field.RequiredIndicator/></Field.Label>
-                    <PasswordInput
-                        value={user.passwd}
-                        name={"passwd"}
-                        onChange={(e) => {
-                            handleChange(e)
-                        }}/>
-                    <Field.ErrorText>Senha necessária</Field.ErrorText>
+                        <Field.Root invalid={error.email} required>
+                            <Field.Label>Email:<Field.RequiredIndicator/></Field.Label>
+                            <Input
+                                value={user.email}
+                                name={"email"}
+                                onChange={(e) => {
+                                    handleChange(e)
+                                }}/>
+                            <Field.ErrorText>Email necessário</Field.ErrorText>
+                        </Field.Root>
 
-                </Field.Root>
+                        <Field.Root invalid={error.passwd} required>
+                            <Field.Label>Senha:<Field.RequiredIndicator/></Field.Label>
+                            <PasswordInput
+                                value={user.passwd}
+                                name={"passwd"}
+                                onChange={(e) => {
+                                    handleChange(e)
+                                }}/>
+                            <Field.ErrorText>Senha necessária</Field.ErrorText>
 
-                <PasswordStrengthMeter value={strength} w={"100%"}/>
+                        </Field.Root>
 
-                <Field.Root invalid={error.passwdConfirm} required>
-                    <Field.Label>Confirme a senha: <Field.RequiredIndicator/></Field.Label>
-                    <PasswordInput
-                        value={user.passwdConfirm}
-                        name={"passwdConfirm"}
-                        onChange={(e) => {
-                            handleChange(e)
-                        }}/>
-                    <Field.ErrorText>Senha necessária</Field.ErrorText>
-                </Field.Root>
+                        <PasswordStrengthMeter value={strength} w={"100%"}/>
 
-                <Button
-                    w={"100%"}
-                    loading={loading}
-                    type="submit"
-                    onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => (onSubmit(e))}>
-                    Entrar
-                </Button>
-            </Flex>
+                        <Field.Root invalid={error.passwdConfirm} required>
+                            <Field.Label>Confirme a senha: <Field.RequiredIndicator/></Field.Label>
+                            <PasswordInput
+                                value={user.passwdConfirm}
+                                name={"passwdConfirm"}
+                                onChange={(e) => {
+                                    handleChange(e)
+                                }}/>
+                            <Field.ErrorText>Senha necessária</Field.ErrorText>
+                        </Field.Root>
+
+                        <Button
+                            w={"100%"}
+                            loading={loading}
+                            type="submit"
+                            onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => (onSubmit(e))}>
+                            Entrar
+                        </Button>
+                    </Flex>
+                </Fieldset.Content>
+                <Fieldset.ErrorText>
+                    A confirmação de senha deve ser igual à senha
+                </Fieldset.ErrorText>
+            </Fieldset.Root>
+
             <Toaster/>
         </form>
     )
