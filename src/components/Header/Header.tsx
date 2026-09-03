@@ -30,19 +30,19 @@ const HeaderLogo = () => {
 const PageHeader = () => {
     const [isLoggedIn] = useState(
         () => {
-            const loggedIn = sessionStorage.getItem("login");
-            return loggedIn;
+            return localStorage.getItem("login");
         }
     );
 
-    if (isLoggedIn == null) {
+    if (isLoggedIn === null) {
         return (
             <Flex
                 justify={"space-between"}
                 w={"100%"}
                 h={"6%"}
-                paddingX={"6"}
-                backgroundColor={"bg.panel"}
+                padding={{base: "5%", md: "0"}}
+                position={"sticky"}
+
                 align={"center"}
             >
 
@@ -66,8 +66,9 @@ const PageHeader = () => {
                 justify={"space-between"}
                 w={"100%"}
                 h={"6%"}
-                p={{base: "2", sm: "4"}}
-                backgroundColor={"bg.panel"}
+                padding={{base: "5%", md: "0"}}
+                position={"sticky"}
+
                 align={"center"}
             >
                 <HeaderLogo/>
