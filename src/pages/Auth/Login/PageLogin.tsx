@@ -89,14 +89,6 @@ const PageLoginForm = () => {
         }
     )
     const [loading, setLoading] = useState(false);
-    const [errorResponse, setErrorResponse] = useState<NetworkErrorResponse>(
-        {
-            status: 400,
-            message: "Um erro ocorreu",
-            dateTime: new Date().toISOString(),
-            isNetworkIssue: false
-        }
-    )
 
     const verifyFields: () => boolean = () => {
         let hasError: boolean = false;
@@ -139,18 +131,17 @@ const PageLoginForm = () => {
 
             } catch (e: unknown) {
                 const err = e as NetworkErrorResponse;
-                console.log(err)
-                setErrorResponse(err)
+                console.log(err);
                 toaster.create(
                     {
                         type: "error",
-                        title: errorResponse.message,
+                        title: err.message,
                         duration: 3000
                     }
-                )
+                );
 
             } finally {
-                setLoading(false)
+                setLoading(false);
             }
         }, 500)
 
