@@ -17,7 +17,7 @@ const DashboardContainer = ({dashHeader, children}: DashStructure) => {
                 {dashHeader}
             </Box>
             <Separator/>
-            <Flex direction={{base: "column"}}>
+            <Flex direction={{base: "column"}} gap={"0.5rem"}>
                 {children}
             </Flex>
         </Stack>
