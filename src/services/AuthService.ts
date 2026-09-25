@@ -15,7 +15,7 @@ class AuthService extends BaseService {
             this.#instance = new AuthService();
         }
 
-        return AuthService.instance;
+        return this.#instance;
     }
 
 
