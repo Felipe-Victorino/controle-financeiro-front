@@ -1,6 +1,6 @@
 import PageContainer from "@/components/Containers/PageContainer.tsx";
 import FormContainer from "@/components/Containers/FormContainer.tsx";
-import {Button, Field, Fieldset, Flex, Heading, Input, Stack} from "@chakra-ui/react";
+import {Button, Field, Fieldset, Heading, Input, Stack} from "@chakra-ui/react";
 import React, {useState} from "react";
 import type {ForgotValues} from "@/types/Requests.ts";
 import type {AxiosResponse} from "axios";
@@ -9,35 +9,32 @@ import {Toaster, toaster} from "@/components/ui/toaster.tsx";
 import AuthService from "@/services/AuthService.ts";
 import {useNavigate} from "react-router-dom";
 import type {AuthForgotResponse} from "@/types/ServerResponse.ts";
+import {AuthContainer} from "@/components/Containers/AuthContainer.tsx";
+import {BigLogo} from "@/components/BigLogo/BigLogo.tsx";
 
 
 const PageForgotPassword = () => {
     return (
         <PageContainer>
-            <FormContainer>
+            <AuthContainer>
+                <BigLogo/>
+                <FormContainer backButton={true}>
 
-                <Flex gap={"3"} direction={"column"} justify={"center"} align={"start"}>
+
+
+
                     <Fieldset.Root>
-                        <Fieldset.Legend>
-                            <Heading>
-                                Esqueci minha senha:
-                            </Heading>
-
-                        </Fieldset.Legend>
-                        <Fieldset.HelperText>
-                            Por favor, insira no campo abaixo o email associado a sua conta, para podermos verificar sua
-                            identidade
-                        </Fieldset.HelperText>
                         <Fieldset.Content>
                             <ForgotPasswordForm/>
                         </Fieldset.Content>
                     </Fieldset.Root>
 
 
-                </Flex>
+                </FormContainer>
+            </AuthContainer>
 
 
-            </FormContainer>
+
         </PageContainer>
     )
 }
@@ -119,6 +116,19 @@ const ForgotPasswordForm = () => {
 
 
     return (
+        <Fieldset.Root>
+            <Fieldset.Legend>
+                <Heading>
+                    Esqueci minha senha:
+                </Heading>
+
+            </Fieldset.Legend>
+            <Fieldset.HelperText>
+                Por favor, insira no campo abaixo o email associado a sua conta, para podermos verificar sua
+                identidade
+            </Fieldset.HelperText>
+            <Fieldset.Content>
+
         <form>
             <Stack gap="4" align="flex-start" maxW="100%">
                 <Field.Root invalid={error.email} required>
@@ -142,6 +152,8 @@ const ForgotPasswordForm = () => {
             </Stack>
             <Toaster/>
         </form>
+            </Fieldset.Content>
+        </Fieldset.Root>
     )
 }
 

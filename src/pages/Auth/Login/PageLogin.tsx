@@ -3,14 +3,9 @@ import {
     Button,
     Field,
     Fieldset,
-    Flex,
-    Heading,
-    HStack,
-    Icon,
     Input,
     Link as ChakraLink,
     Stack,
-    VStack
 } from "@chakra-ui/react";
 import React, {useState} from "react";
 import {PasswordInput} from "@/components/ui/password-input.tsx";
@@ -22,52 +17,32 @@ import type {LoginValues} from "@/types/Requests.ts";
 import {Toaster, toaster} from "@/components/ui/toaster.tsx";
 import FormContainer from "@/components/Containers/FormContainer.tsx";
 import AuthService from "@/services/AuthService.ts";
-import {GiDolphin} from "react-icons/gi";
 import type {AuthLoginResponse} from "@/types/ServerResponse.ts";
+import {BigLogo} from "@/components/BigLogo/BigLogo.tsx";
+import {AuthContainer} from "@/components/Containers/AuthContainer.tsx";
 
 
 const PageLogin = () => {
     return (
         <PageContainer>
-            <FormContainer>
-
-                <Flex gap={"12"} direction={"column"} justify={"center"} align={"start"} padding={"4"}>
-                    <VStack>
-                        <HStack>
-                            <Icon asChild size={"2xl"}>
-                                <GiDolphin/>
-                            </Icon>
-                            <Heading size={"4xl"}>
-                                FinFin
-                            </Heading>
-                        </HStack>
-
-                        <Heading>
-                            Logar no serviço
-                        </Heading>
-                    </VStack>
-
-                </Flex>
-
-                <Flex gap={"3"} direction={"column"} justify={"center"} align={"start"}>
-                    <Fieldset.Root>
-                        <Fieldset.Content>
-                            <PageLoginForm/>
-                        </Fieldset.Content>
-                    </Fieldset.Root>
-
-                    <ChakraLink asChild>
-                        <Link to={"/auth/forgot"}>Esqueci minha senha</Link>
-                    </ChakraLink>
-                    <ChakraLink asChild>
-                        <Link to={"/auth/signin"}>Criar uma conta</Link>
-                    </ChakraLink>
+            <AuthContainer>
+                <BigLogo/>
+                <FormContainer backButton={false}>
 
 
-                </Flex>
 
 
-            </FormContainer>
+                        <Fieldset.Root>
+                            <Fieldset.Content>
+                                <PageLoginForm/>
+                            </Fieldset.Content>
+                        </Fieldset.Root>
+
+
+                </FormContainer>
+            </AuthContainer>
+
+
 
         </PageContainer>
     )
@@ -152,42 +127,53 @@ const PageLoginForm = () => {
     }
 
     return (
+        <Fieldset.Root>
+            <Fieldset.Content>
+                <form>
+                    <Stack gap="4" align="center" maxW="sm">
 
-        <form>
-            <Stack gap="4" align="flex-start" maxW="sm">
+                        <Field.Root invalid={error.email} required>
+                            <Field.Label>Email <Field.RequiredIndicator/></Field.Label>
+                            <Input
+                                value={user.email}
+                                name={"email"}
+                                onChange={(e) => {
+                                    handleChange(e)
+                                }}/>
+                            <Field.ErrorText>Email necessário</Field.ErrorText>
+                        </Field.Root>
 
-                <Field.Root invalid={error.email} required>
-                    <Field.Label>Email <Field.RequiredIndicator/></Field.Label>
-                    <Input
-                        value={user.email}
-                        name={"email"}
-                        onChange={(e) => {
-                            handleChange(e)
-                        }}/>
-                    <Field.ErrorText>Email necessário</Field.ErrorText>
-                </Field.Root>
+                        <Field.Root invalid={error.passwd} required>
+                            <Field.Label>Senha <Field.RequiredIndicator/></Field.Label>
+                            <PasswordInput
+                                value={user.passwd}
+                                name={"passwd"}
+                                onChange={(e) => {
+                                    handleChange(e)
+                                }}/>
+                            <Field.ErrorText>Senha necessária</Field.ErrorText>
+                        </Field.Root>
 
-                <Field.Root invalid={error.passwd} required>
-                    <Field.Label>Senha <Field.RequiredIndicator/></Field.Label>
-                    <PasswordInput
-                        value={user.passwd}
-                        name={"passwd"}
-                        onChange={(e) => {
-                            handleChange(e)
-                        }}/>
-                    <Field.ErrorText>Senha necessária</Field.ErrorText>
-                </Field.Root>
+                        <Button
+                            w={"100%"}
+                            loading={loading}
+                            type="submit"
+                            onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => (onSubmit(e))}>
+                            Entrar
+                        </Button>
 
-                <Button
-                    w={"100%"}
-                    loading={loading}
-                    type="submit"
-                    onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => (onSubmit(e))}>
-                    Entrar
-                </Button>
-            </Stack>
-            <Toaster/>
-        </form>
+                        <ChakraLink asChild>
+                            <Link to={"/auth/forgot"}>Esqueci minha senha</Link>
+                        </ChakraLink>
+                        <ChakraLink asChild>
+                            <Link to={"/auth/signin"}>Criar uma conta</Link>
+                        </ChakraLink>
+                    </Stack>
+                    <Toaster/>
+                </form>
+            </Fieldset.Content>
+        </Fieldset.Root>
+
 
     )
 }

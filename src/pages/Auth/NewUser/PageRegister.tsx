@@ -1,5 +1,5 @@
 import PageContainer from "@/components/Containers/PageContainer.tsx";
-import {Button, Field, Fieldset, Flex, Heading, Input, VStack} from "@chakra-ui/react";
+import {Button, Field, Fieldset, Flex, Heading, Input} from "@chakra-ui/react";
 
 import React, {useMemo, useState} from "react";
 import type {NetworkErrorResponse} from "@/types/ServerErrors.ts";
@@ -9,6 +9,9 @@ import AuthService from "@/services/AuthService.ts";
 import FormContainer from "@/components/Containers/FormContainer.tsx";
 import {useNavigate} from "react-router-dom";
 import {type Options, passwordStrength} from "check-password-strength";
+import {AuthContainer} from "@/components/Containers/AuthContainer.tsx";
+import {BigLogo} from "@/components/BigLogo/BigLogo.tsx";
+
 
 interface RegisterValues {
     name: string,
@@ -20,29 +23,20 @@ interface RegisterValues {
 const PageRegister = () => {
     return (
         <PageContainer>
-            <FormContainer>
+            <AuthContainer>
+                <BigLogo/>
+                <FormContainer backButton={true}>
 
-                <Flex gap={"12"} direction={"column"} justify={"center"} align={"start"} padding={"4"}>
-                    <VStack>
-                        <Heading size={"6xl"}>
-                            FinFin
-                        </Heading>
-                        <Heading>
-                            Criar uma nova conta
-                        </Heading>
 
-                    </VStack>
 
-                </Flex>
-                <Flex gap={"3"} direction={"column"} justify={"center"} align={"start"}>
 
                     <PageRegisterForm/>
 
 
-                </Flex>
+                </FormContainer>
+            </AuthContainer>
 
 
-            </FormContainer>
 
         </PageContainer>
     )
@@ -202,10 +196,16 @@ const PageRegisterForm = () => {
     return (
         <form>
             <Fieldset.Root invalid={error.notEqual}>
+
                 <Fieldset.Legend>
-                    <Heading>
-                        Criação de conta
-                    </Heading>
+
+
+                        <Heading>
+                            Criação de conta
+                        </Heading>
+
+
+
 
                 </Fieldset.Legend>
                 <Fieldset.HelperText>

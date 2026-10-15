@@ -1,6 +1,6 @@
 import PageContainer from "@/components/Containers/PageContainer.tsx";
 import FormContainer from "@/components/Containers/FormContainer.tsx";
-import {Button, Field, Fieldset, Flex, Heading, Input, Stack} from "@chakra-ui/react";
+import {Button, Field, Fieldset,  Heading, Input, Stack} from "@chakra-ui/react";
 import React, {useState} from "react";
 import type {ResetValues} from "@/types/Requests.ts";
 import {PasswordInput} from "@/components/ui/password-input.tsx";
@@ -9,35 +9,32 @@ import {Toaster, toaster} from "@/components/ui/toaster.tsx";
 import AuthService from "@/services/AuthService.ts";
 import {useNavigate} from "react-router-dom";
 import type {AuthResetResponse} from "@/types/ServerResponse.ts";
+import {AuthContainer} from "@/components/Containers/AuthContainer.tsx";
+import {BigLogo} from "@/components/BigLogo/BigLogo.tsx";
 
 
 const PageResetPassword = () => {
     return (
         <PageContainer>
-            <FormContainer>
+            <AuthContainer>
+                <BigLogo/>
+                <FormContainer backButton={true}>
 
 
-                <Flex gap={"3"} direction={"column"} justify={"center"} align={"start"}>
+
+
                     <Fieldset.Root>
-                        <Fieldset.Legend>
-                            <Heading>
-                                Um token de recuperação de senha foi enviado ao seu email
-                            </Heading>
-
-                        </Fieldset.Legend>
-                        <Fieldset.HelperText>
-                            Por favor, insira o token de 32 dígitos abaixo e altere a sua senha
-                        </Fieldset.HelperText>
                         <Fieldset.Content>
                             <ResetPasswordForm/>
                         </Fieldset.Content>
                     </Fieldset.Root>
 
 
-                </Flex>
+                </FormContainer>
+            </AuthContainer>
 
 
-            </FormContainer>
+
         </PageContainer>
     )
 }
@@ -132,6 +129,17 @@ const ResetPasswordForm = () => {
 
 
     return (
+        <Fieldset.Root>
+            <Fieldset.Legend>
+                <Heading>
+                    Um token de recuperação de senha foi enviado ao seu email
+                </Heading>
+
+            </Fieldset.Legend>
+            <Fieldset.HelperText>
+                Por favor, insira o token de 32 dígitos abaixo e altere a sua senha
+            </Fieldset.HelperText>
+            <Fieldset.Content>
         <form>
             <Stack gap="4" align="flex-start" maxW="100%">
                 <Field.Root invalid={error.token} required>
@@ -177,6 +185,8 @@ const ResetPasswordForm = () => {
             </Stack>
             <Toaster/>
         </form>
+            </Fieldset.Content>
+        </Fieldset.Root>
     )
 }
 
