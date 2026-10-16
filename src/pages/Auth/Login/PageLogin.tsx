@@ -94,7 +94,7 @@ const PageLoginForm = () => {
         setLoading(true);
         setTimeout(async () => {
             try {
-                const response = await AuthService.instance.loginUser(user) as AxiosResponse;
+                const response = await AuthService.instance.login(user) as AxiosResponse;
 
                 const data = response.data as AuthLoginResponse;
 
