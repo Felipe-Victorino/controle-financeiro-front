@@ -1,10 +1,10 @@
 import {Flex, Heading, HStack, Icon, Link as ChakraLink, LinkBox, LinkOverlay} from "@chakra-ui/react";
 
 import {Link} from "react-router-dom";
-import {useEffect, useState} from "react";
-import HeaderDrawer from "@/components/HeaderDrawer/HeaderDrawer.tsx";
+import HeaderDrawer from "@/components/ui/HeaderDrawer/HeaderDrawer.tsx";
 import {ColorModeButton} from "@/components/ui/color-mode.tsx";
 import {GiDolphin} from "react-icons/gi";
+import authService from "@/services/AuthService.ts";
 
 const HeaderLogo = ({homepage}: { homepage: string }) => {
 
@@ -30,26 +30,8 @@ const HeaderLogo = ({homepage}: { homepage: string }) => {
 
 
 const PageHeader = () => {
-    const [logStatus] = useState(
-        () => {
-            return localStorage.getItem("login");
-        }
-    );
 
-    const [homepage, setHomepage] = useState("/");
-
-
-    useEffect(() => {
-        function checkLogStatus() {
-            if (logStatus != null) {
-                setHomepage("/dashboard");
-            }
-        }
-
-        checkLogStatus();
-    }, [logStatus]);
-
-    if (logStatus === null) {
+    if (!authService.instance.isAuthenticated()) {
 
         return (
             <Flex
@@ -62,7 +44,7 @@ const PageHeader = () => {
                 align={"center"}
             >
 
-                <HeaderLogo homepage={homepage}/>
+                <HeaderLogo homepage={"/login"}/>
 
 
                 <HStack>
@@ -88,7 +70,7 @@ const PageHeader = () => {
 
                 align={"center"}
             >
-                <HeaderLogo homepage={homepage}/>
+                <HeaderLogo homepage={"/dash"}/>
 
                 <HStack>
                     <ColorModeButton/>
