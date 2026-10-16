@@ -1,34 +1,66 @@
-import axios, {AxiosError, type AxiosInstance} from 'axios';
-import type {NetworkErrorResponse, ServerErrorResponse} from "../types/ServerErrors.ts";
+import axios, {type AxiosInstance} from 'axios';
+import type {NetworkErrorResponse} from "../types/ServerErrors.ts";
 
 const api: AxiosInstance = axios.create({
     baseURL: import.meta.env.VITE_REACT_APP_API_BASE_URL || 'http://localhost:8080/api/v1',
+    withCredentials: true,
     headers: {
         'Content-Type': 'application/json',
     },
+
 });
 
 api.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem('app-token');
         const usuario = JSON.parse(localStorage.getItem('usuario') || 'null');
-        const tokenUsuario = usuario?.token;
-
-        if (token || tokenUsuario) {
-            config.headers.Authorization = `Bearer ${token || tokenUsuario}`;
+        if (usuario?.token) {
+            config.headers.Authorization = `Bearer ${usuario.token}`;
         }
-
         return config;
     },
-
     (error) => Promise.reject(error)
 );
+
+let renewalInProgress: Promise<any> | null = null;
+
+const renewAccesstoken = () => {
+    if (!renewalInProgress) {
+        renewalInProgress = api
+            .post('/autenticacao/refresh')
+            .then((resposta) => {
+                const usuario = JSON.parse(localStorage.getItem('usuario') || 'null');
+                const usuarioAtualizado = { ...usuario, ...resposta.data };
+                localStorage.setItem('usuario', JSON.stringify(usuarioAtualizado));
+                return usuarioAtualizado.token;
+            })
+            .catch((erro) => {
+                localStorage.removeItem('usuario');
+                window.location.href = '/login';
+                throw erro;
+            })
+            .finally(() => {
+                renewalInProgress = null;
+            });
+    }
+    return renewalInProgress;
+};
+
 
 api.interceptors.response.use(
     (response) => {
         return response;
     },
-    (error: AxiosError<ServerErrorResponse>) => {
+    async (error) => {
+        const originalRequest = error.config;
+        const isRefreshCall = originalRequest?.url?.includes('/auth/refresh');
+
+        if (error.response?.status === 401 && !originalRequest._retry && !isRefreshCall) {
+            originalRequest._retry = true;
+            const novoToken = await renewAccesstoken();
+            originalRequest.headers.Authorization = `Bearer ${novoToken}`;
+            return api(originalRequest);
+        }
+
         const localError: NetworkErrorResponse = {
             message: "Erro inesperado",
             isNetworkIssue: false,
@@ -52,5 +84,4 @@ api.interceptors.response.use(
         return Promise.reject(localError);
     }
 )
-
 export default api;
