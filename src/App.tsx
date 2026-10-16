@@ -11,6 +11,8 @@ import PageForgotPassword from "@/pages/Auth/ForgotPassword/PageForgotPassword.t
 import PageResetPassword from "@/pages/Auth/ChangePassword/PageResetPassword.tsx";
 import {useEffect, useState} from "react";
 import PageCategories from "@/pages/Category/PageCategories.tsx";
+import AuthRoute from "@/components/PublicRoute.tsx";
+import PrivateRoute from "@/components/PrivateRoute.tsx";
 
 
 function App() {
@@ -33,18 +35,14 @@ function App() {
                 <Routes>
 
                     <Route index path={"/"} element={indexElement}></Route>
-                    <Route path={"auth"}>
-                        <Route path="login" element={<PageLogin/>}></Route>
-                        <Route path="signin" element={<PageRegister/>}></Route>
-                        <Route path="forgot" element={<PageForgotPassword/>}></Route>
-                        <Route path="reset" element={<PageResetPassword/>}></Route>
-                    </Route>
 
+                    <Route path="login" element={<AuthRoute><PageLogin/></AuthRoute> }/>
+                    <Route path="signin" element={<AuthRoute><PageRegister/></AuthRoute>}/>
+                    <Route path="forgot" element={<AuthRoute><PageForgotPassword/></AuthRoute>}/>
+                    <Route path="reset" element={<AuthRoute><PageResetPassword/></AuthRoute>}/>
 
-                    <Route path="dashboard" element={<PageDashboard/>}>
-
-                    </Route>
-                    <Route path={"categories"} element={<PageCategories/>}/>
+                    <Route path="dash" element={<PrivateRoute><PageDashboard/></PrivateRoute>}/>
+                    <Route path={"categories"} element={<PrivateRoute><PageCategories/></PrivateRoute>}/>
 
 
                 </Routes>
