@@ -1,11 +1,11 @@
 import "../../styles/Pages.css"
-import PageContainer from "@/components/Containers/PageContainer.tsx";
+import PageContainer from "@/components/ui/Containers/PageContainer.tsx";
 import {useEffect} from "react";
 import {useNavigate} from "react-router-dom";
-import DashboardContainer from "@/components/Containers/DashboardContainer.tsx";
-import DashboardTitle from "@/components/DashboardTitle.tsx";
-import RecentTransactions from "@/components/DataCards/RecentTransactions.tsx";
-import FinanceSummary from "@/components/DataCards/FinanceSummary.tsx";
+import DashboardContainer from "@/components/ui/Containers/DashboardContainer.tsx";
+import DashboardTitle from "@/components/ui/DashboardTitle/DashboardTitle.tsx";
+import RecentTransactions from "@/components/ui/DataCards/RecentTransactions.tsx";
+import FinanceSummary from "@/components/ui/DataCards/FinanceSummary.tsx";
 import {Button, Card, Carousel, Heading, IconButton} from "@chakra-ui/react";
 import type {LocationLinkCardType} from "@/types/DataCards.ts";
 import {MdArrowBack, MdArrowForward} from "react-icons/md";

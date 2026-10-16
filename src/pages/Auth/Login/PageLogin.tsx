@@ -1,4 +1,4 @@
-import PageContainer from "@/components/Containers/PageContainer.tsx";
+import PageContainer from "@/components/ui/Containers/PageContainer.tsx";
 import {
     Button,
     Field,
@@ -15,11 +15,11 @@ import {Link, useNavigate} from "react-router-dom";
 import type {LoginValues} from "@/types/Requests.ts";
 
 import {Toaster, toaster} from "@/components/ui/toaster.tsx";
-import FormContainer from "@/components/Containers/FormContainer.tsx";
+import FormContainer from "@/components/ui/Containers/FormContainer.tsx";
 import AuthService from "@/services/AuthService.ts";
 import type {AuthLoginResponse} from "@/types/ServerResponse.ts";
-import {BigLogo} from "@/components/BigLogo/BigLogo.tsx";
-import {AuthContainer} from "@/components/Containers/AuthContainer.tsx";
+import {BigLogo} from "@/components/ui/BigLogo/BigLogo.tsx";
+import {AuthContainer} from "@/components/ui/Containers/AuthContainer.tsx";
 
 
 const PageLogin = () => {

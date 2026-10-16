@@ -1,5 +1,5 @@
-import PageContainer from "@/components/Containers/PageContainer.tsx";
-import FormContainer from "@/components/Containers/FormContainer.tsx";
+import PageContainer from "@/components/ui/Containers/PageContainer.tsx";
+import FormContainer from "@/components/ui/Containers/FormContainer.tsx";
 import {Button, Field, Fieldset, Heading, Input, Stack} from "@chakra-ui/react";
 import React, {useState} from "react";
 import type {ForgotValues} from "@/types/Requests.ts";
@@ -9,8 +9,8 @@ import {Toaster, toaster} from "@/components/ui/toaster.tsx";
 import AuthService from "@/services/AuthService.ts";
 import {useNavigate} from "react-router-dom";
 import type {AuthForgotResponse} from "@/types/ServerResponse.ts";
-import {AuthContainer} from "@/components/Containers/AuthContainer.tsx";
-import {BigLogo} from "@/components/BigLogo/BigLogo.tsx";
+import {AuthContainer} from "@/components/ui/Containers/AuthContainer.tsx";
+import {BigLogo} from "@/components/ui/BigLogo/BigLogo.tsx";
 
 
 const PageForgotPassword = () => {

@@ -1,8 +1,8 @@
-import PageContainer from "@/components/Containers/PageContainer.tsx";
-import DashboardContainer from "@/components/Containers/DashboardContainer.tsx";
-import CategoryCard from "@/components/DataCards/CategoryCard.tsx";
+import PageContainer from "@/components/ui/Containers/PageContainer.tsx";
+import DashboardContainer from "@/components/ui/Containers/DashboardContainer.tsx";
+import CategoryCard from "@/components/ui/DataCards/CategoryCard.tsx";
 import type {CategoryResponse} from "@/types/CategoryResponse.ts";
-import DashboardTitle from "@/components/DashboardTitle.tsx";
+import DashboardTitle from "@/components/ui/DashboardTitle/DashboardTitle.tsx";
 
 const PageCategories = () => {
 

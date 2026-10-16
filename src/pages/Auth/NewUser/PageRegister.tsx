@@ -1,4 +1,4 @@
-import PageContainer from "@/components/Containers/PageContainer.tsx";
+import PageContainer from "@/components/ui/Containers/PageContainer.tsx";
 import {Button, Field, Fieldset, Flex, Heading, Input} from "@chakra-ui/react";
 
 import React, {useMemo, useState} from "react";
@@ -6,11 +6,11 @@ import type {NetworkErrorResponse} from "@/types/ServerErrors.ts";
 import {PasswordInput, PasswordStrengthMeter} from "@/components/ui/password-input.tsx";
 import {toaster, Toaster} from "@/components/ui/toaster.tsx";
 import AuthService from "@/services/AuthService.ts";
-import FormContainer from "@/components/Containers/FormContainer.tsx";
+import FormContainer from "@/components/ui/Containers/FormContainer.tsx";
 import {useNavigate} from "react-router-dom";
 import {type Options, passwordStrength} from "check-password-strength";
-import {AuthContainer} from "@/components/Containers/AuthContainer.tsx";
-import {BigLogo} from "@/components/BigLogo/BigLogo.tsx";
+import {AuthContainer} from "@/components/ui/Containers/AuthContainer.tsx";
+import {BigLogo} from "@/components/ui/BigLogo/BigLogo.tsx";
 
 
 interface RegisterValues {
