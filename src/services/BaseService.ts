@@ -13,6 +13,10 @@ abstract class BaseService {
         return await api.post(this.endPoint + target, data);
     }
 
+    async post(target: string, data: object){
+        return await api.post(target, data);
+    }
+
     async insert(data: object) {
         return await api.post(this.endPoint, data);
     }
