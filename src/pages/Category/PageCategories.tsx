@@ -3,6 +3,7 @@ import DashboardContainer from "@/components/ui/Containers/DashboardContainer.ts
 import CategoryCard from "@/components/ui/DataCards/CategoryCard.tsx";
 import type {CategoryResponse} from "@/types/CategoryResponse.ts";
 import DashboardTitle from "@/components/ui/DashboardTitle/DashboardTitle.tsx";
+import {Button, HStack} from "@chakra-ui/react";
 
 const PageCategories = () => {
 
@@ -22,6 +23,10 @@ const PageCategories = () => {
 
                 body={"Essa é a lista de categorias, crie, desative ou atualize categorias registradas."}
             />}>
+
+                <HStack>
+                    <Button>Criar Nova Categoria</Button>
+                </HStack>
 
                 <CategoryCard category={testCategory}>
 
