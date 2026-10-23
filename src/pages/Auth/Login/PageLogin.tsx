@@ -96,12 +96,11 @@ const PageLoginForm = () => {
             try {
                 const response = await AuthService.instance.login(user) as AxiosResponse;
 
-                const data = response.data as AuthLoginResponse;
-
+                const data = response as unknown as AuthLoginResponse;
                 if (response) {
                     localStorage.setItem("name", data.name)
                     localStorage.setItem("login", "true")
-                    navigate("/dashboard");
+                    navigate("/home");
                 }
 
             } catch (e: unknown) {
@@ -163,10 +162,10 @@ const PageLoginForm = () => {
                         </Button>
 
                         <ChakraLink asChild>
-                            <Link to={"/auth/forgot"}>Esqueci minha senha</Link>
+                            <Link to={"/forgot"}>Esqueci minha senha</Link>
                         </ChakraLink>
                         <ChakraLink asChild>
-                            <Link to={"/auth/signin"}>Criar uma conta</Link>
+                            <Link to={"/signin"}>Criar uma conta</Link>
                         </ChakraLink>
                     </Stack>
                     <Toaster/>
