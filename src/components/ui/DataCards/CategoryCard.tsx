@@ -1,10 +1,11 @@
 import type {CategoryResponse} from "@/types/CategoryResponse.ts";
-import {Card, HStack} from "@chakra-ui/react";
 import {MdCircle, MdFavorite, MdMood, MdStar} from "react-icons/md";
 import {TbLungs} from "react-icons/tb";
+import ListItemContainer from "@/components/ui/Containers/ListItemContainer.tsx";
+import {Icon} from "@chakra-ui/react";
 
 const IconList = {
-    star: <MdStar/>,
+    star: <MdStar />,
     heart: <MdFavorite/>,
     smile: <MdMood/>,
     lung: <TbLungs/>
@@ -15,15 +16,13 @@ const CategoryCard = ({category}: { category: CategoryResponse }) => {
 
     const iconKey = category.icon as keyof typeof IconList;
     return (
-        <Card.Root>
-            <Card.Body>
-                <Card.Title>
-                    <HStack>{IconList[iconKey] ?? <MdCircle/>}
-                        {category.name}</HStack>
+        <ListItemContainer>
+            <Icon size={"md"}>
+                {IconList[iconKey] ?? <MdCircle/>}
+            </Icon>
+            {category.name}
+        </ListItemContainer>
 
-                </Card.Title>
-            </Card.Body>
-        </Card.Root>
     )
 }
 
