@@ -38,8 +38,8 @@ const PageHeader = () => {
                 justify={"space-between"}
                 w={"100%"}
                 h={"6%"}
-                padding={{base: "5%", md: "0"}}
-                position={"sticky"}
+                paddingX={"5%"}
+                position={"fixed"}
 
                 align={"center"}
             >
@@ -65,8 +65,8 @@ const PageHeader = () => {
                 justify={"space-between"}
                 w={"100%"}
                 h={"6%"}
-                padding={{base: "5%", md: "0"}}
-                position={"sticky"}
+                paddingX={"5%"}
+                position={"fixed"}
 
                 align={"center"}
             >
