@@ -21,7 +21,7 @@ const HeaderDrawer = () => {
     const username = localStorage.getItem("name") || "Wayne";
 
     const navLinks = [
-        {name: "Página Inicial", link: "/dashboard", icon: <MdHome/>},
+        {name: "Página Inicial", link: "/home", icon: <MdHome/>},
         {name: "Categorias", link: "/categories", icon: <MdCategory/>},
         {name: "Carteiras", link: "/wallets", icon: <MdWallet/>},
         {name: "Transações", link: "/transactions", icon: <MdSwapHoriz/>},
