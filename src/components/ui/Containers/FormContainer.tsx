@@ -16,7 +16,7 @@ const FormContainer = ({children, backButton}: FormContainerTypes) => {
         return (
 
             <Flex
-                h={{base: "100%", sm: "70%", md: "fit-content"}}
+                h={{base: "100%", md: "fit-content"}}
                 w={{base: "fit-content"}}
                 rounded={"md"}
                 shadow={"lg"}
