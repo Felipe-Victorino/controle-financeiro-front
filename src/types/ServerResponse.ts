@@ -4,6 +4,8 @@ export interface AuthForgotResponse {
 }
 
 export interface AuthLoginResponse {
+    token: string,
+    email: string,
     expiresIn: string,
     name: string,
 }
