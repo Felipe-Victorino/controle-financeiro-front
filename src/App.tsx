@@ -41,7 +41,7 @@ function App() {
                     <Route path="forgot" element={<AuthRoute><PageForgotPassword/></AuthRoute>}/>
                     <Route path="reset" element={<AuthRoute><PageResetPassword/></AuthRoute>}/>
 
-                    <Route path="dash" element={<PrivateRoute><PageDashboard/></PrivateRoute>}/>
+                    <Route path="home" element={<PrivateRoute><PageDashboard/></PrivateRoute>}/>
                     <Route path={"categories"} element={<PrivateRoute><PageCategories/></PrivateRoute>}/>
 
 
