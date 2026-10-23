@@ -35,7 +35,7 @@ class AuthService extends BaseService {
 
     async login(data: LoginValues): Promise<AxiosResponse> {
         try {
-            const resposta = await this.post('/login', data);
+            const resposta = await this.insertIn('/login', data);
             localStorage.setItem(this.USER_KEY, JSON.stringify(resposta.data));
             return resposta.data;
         } catch (erro) {
