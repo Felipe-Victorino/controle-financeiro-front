@@ -4,8 +4,7 @@ abstract class BaseService {
 
     endPoint: string;
 
-
-    constructor(endPoint: string) {
+    protected constructor(endPoint: string) {
         this.endPoint = endPoint;
     }
 
