@@ -109,7 +109,7 @@ const PageRegisterForm = () => {
         }
     )
 
-    const onSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const onSubmit = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault();
         if (validateEmptyFields()) {
             return;
@@ -121,36 +121,33 @@ const PageRegisterForm = () => {
 
         setLoading(true)
 
-        setTimeout(
-            async () => {
-                try {
-                    const success = await AuthService.instance.registerNewUser(user)
+        try {
+            const success = await AuthService.instance.registerNewUser(user)
 
-                    if (success) {
-                        navigate("/auth/login");
-                    }
-                    setSuccess('Cadastro realizado com sucesso.');
+            if (success) {
+                navigate("/login");
+            }
+            setSuccess('Cadastro realizado com sucesso.');
 
 
-                } catch (e: unknown) {
-                    const err = e as NetworkErrorResponse;
-                    console.log(err)
-                    setErrorResponse(err)
-                    toaster.create(
-                        {
-                            type: "error",
-                            title: errorResponse.message,
-                            duration: 3000
-                        }
-                    )
-                } finally {
-                    setLoading(false);
+        } catch (e: unknown) {
+            const err = e as NetworkErrorResponse;
+            console.log(err)
+            setErrorResponse(err)
+            toaster.create(
+                {
+                    type: "error",
+                    title: errorResponse.message,
+                    duration: 3000
                 }
-                console.log(error);
-                console.log(success)
-            },
-            500
-        )
+            )
+        } finally {
+            setLoading(false);
+        }
+        console.log(error);
+        console.log(success)
+
+
     }
 
     const validateEmptyFields = () => {
