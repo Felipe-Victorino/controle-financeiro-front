@@ -12,7 +12,7 @@ const api: AxiosInstance = axios.create({
 
 api.interceptors.request.use(
     (config) => {
-        const usuario = JSON.parse(localStorage.getItem('usuario') || 'null');
+        const usuario = JSON.parse(localStorage.getItem('user') || 'null');
         if (usuario?.token) {
             config.headers.Authorization = `Bearer ${usuario.token}`;
         }
@@ -26,15 +26,15 @@ let renewalInProgress: Promise<any> | null = null;
 const renewAccesstoken = () => {
     if (!renewalInProgress) {
         renewalInProgress = api
-            .post('/autenticacao/refresh')
+            .post('/auth/refresh')
             .then((resposta) => {
-                const usuario = JSON.parse(localStorage.getItem('usuario') || 'null');
+                const usuario = JSON.parse(localStorage.getItem('user') || 'null');
                 const usuarioAtualizado = { ...usuario, ...resposta.data };
-                localStorage.setItem('usuario', JSON.stringify(usuarioAtualizado));
+                localStorage.setItem('user', JSON.stringify(usuarioAtualizado));
                 return usuarioAtualizado.token;
             })
             .catch((erro) => {
-                localStorage.removeItem('usuario');
+                localStorage.removeItem('user');
                 window.location.href = '/login';
                 throw erro;
             })
