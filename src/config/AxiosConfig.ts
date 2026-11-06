@@ -29,14 +29,14 @@ const renewAccesstoken = () => {
             .post('/auth/refresh')
             .then((resposta) => {
                 const usuario = JSON.parse(localStorage.getItem('user') || 'null');
-                const usuarioAtualizado = { ...usuario, ...resposta.data };
+                const usuarioAtualizado = {...usuario, ...resposta.data};
                 localStorage.setItem('user', JSON.stringify(usuarioAtualizado));
                 return usuarioAtualizado.token;
             })
-            .catch((erro) => {
+            .catch((error) => {
                 localStorage.removeItem('user');
                 window.location.href = '/login';
-                throw erro;
+                throw error;
             })
             .finally(() => {
                 renewalInProgress = null;
@@ -53,19 +53,20 @@ api.interceptors.response.use(
     async (error) => {
         const originalRequest = error.config;
         const isRefreshCall = originalRequest?.url?.includes('/auth/refresh');
-
-        if (error.response?.status === 401 && !originalRequest._retry && !isRefreshCall) {
-            originalRequest._retry = true;
-            const novoToken = await renewAccesstoken();
-            originalRequest.headers.Authorization = `Bearer ${novoToken}`;
-            return api(originalRequest);
-        }
-
         const localError: NetworkErrorResponse = {
             message: "Erro inesperado",
             isNetworkIssue: false,
             dateTime: new Date().toISOString()
         }
+
+        if ((error.response?.status === 403 || error.response?.status === 401) && !originalRequest._retry && !isRefreshCall) {
+            originalRequest._retry = true;
+            const novoToken = await renewAccesstoken();
+            originalRequest.headers.Authorization = `Bearer ${novoToken}`;
+            console.log("Renovando token");
+            return api(originalRequest);
+        }
+
 
         if (!error.response) {
             localError.message = "Não foi possível se conectar ao servidor";
