@@ -13,7 +13,8 @@ import {useEffect, useState} from "react";
 import PageCategories from "@/pages/Category/PageCategories.tsx";
 import AuthRoute from "@/components/PublicRoute.tsx";
 import PrivateRoute from "@/components/PrivateRoute.tsx";
-
+import AuthService from "@/services/AuthService.ts";
+import {Toaster} from "@/components/ui/toaster.tsx";
 
 function App() {
 
@@ -21,7 +22,7 @@ function App() {
 
     useEffect(() => {
         function changeRootElement() {
-            if (localStorage.getItem("login") === "true") {
+            if (AuthService.instance.isAuthenticated()) {
                 setIndexElement(<PageDashboard/>)
             }
         }
@@ -31,6 +32,7 @@ function App() {
 
     return (
         <Box h={"100vh"}>
+
             <BrowserRouter>
                 <Routes>
 
@@ -47,6 +49,7 @@ function App() {
 
                 </Routes>
             </BrowserRouter>
+            <Toaster/>
         </Box>
     );
 }
