@@ -8,28 +8,43 @@ abstract class BaseService {
         this.endPoint = endPoint;
     }
 
-    async insertIn(target: string, data: object) {
+    async postWithTarget(target: string, data: object) {
         return await api.post(this.endPoint + target, data);
-    }
-
-    async post(target: string, data: object){
-        return await api.post(target, data);
     }
 
     async insert(data: object) {
         return await api.post(this.endPoint, data);
     }
 
-    async update(data: object) {
-        return await api.put(this.endPoint, data);
+    async post(target: string, data?: object | null | undefined) {
+        return await api.post(this.endPoint + target, data);
+    }
+
+    async put(id: number, data: object) {
+        return await api.put(`${this.endPoint}${id}`, data);
+    }
+
+    async putWithTarget(target: string, data: object | null) {
+        return await api.put(this.endPoint + target, data);
     }
 
     async delete(id: number) {
         return await api.delete(`${this.endPoint}/${id}`);
     }
 
+    async getWithTarget(target: string) {
+        return await api.get(this.endPoint + target);
+    }
 
-    async getAll() {
+    async getById(id: number) {
+        return await api.get(`${this.endPoint}/${id}`);
+    }
+
+    async getByParam(param: string) {
+        return await api.get(`${this.endPoint}/${param}`);
+    }
+
+    async get() {
         return await api.get(this.endPoint);
     }
 }
