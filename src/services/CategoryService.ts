@@ -15,4 +15,26 @@ export class CategoryService extends BaseService {
 
         return this.#instance;
     }
+
+    async getCategoryList() {
+        return await this.get();
+    }
+
+    async createCategory(values: object) {
+        return await this.insert(values);
+    }
+
+    async updateCategory(id: number, data: object) {
+        return await this.put(id, data);
+    }
+
+    async deleteCategory(id: number) {
+        return await this.delete(id);
+    }
+
+    async deactivateCategory(id: number) {
+        return await this.putWithTarget(`/deactivate/${id}`, {})
+    }
+
+
 }
