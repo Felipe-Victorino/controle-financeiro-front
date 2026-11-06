@@ -1,9 +1,5 @@
-export interface RegisterValues {
-    name: string,
-    email: string,
-    passwd: string
-    passwdConfirm: string
-}
+
+
 
 export interface LoginValues {
     email: string,
