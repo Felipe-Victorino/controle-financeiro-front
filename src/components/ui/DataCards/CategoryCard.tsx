@@ -1,27 +1,32 @@
-import type {CategoryResponse} from "@/types/CategoryResponse.ts";
+import type {CategoryDTO} from "@/types/ServerResponseDTO.ts";
 import {MdCircle, MdFavorite, MdMood, MdStar} from "react-icons/md";
 import {TbLungs} from "react-icons/tb";
-import ListItemContainer from "@/components/ui/Containers/ListItemContainer.tsx";
+import ListItemCard from "@/components/ui/DataCards/ListItemCard.tsx";
 import {Icon} from "@chakra-ui/react";
 
 const IconList = {
-    star: <MdStar />,
+    star: <MdStar/>,
     heart: <MdFavorite/>,
     smile: <MdMood/>,
     lung: <TbLungs/>
 }
 
+interface CategoryCardProps {
+    category: CategoryDTO;
+    onEdit: () => void | Promise<void>;
+    onDelete: () => void | Promise<void>;
+}
 
-const CategoryCard = ({category}: { category: CategoryResponse }) => {
+const CategoryCard = ({category, onEdit, onDelete}: CategoryCardProps) => {
 
     const iconKey = category.icon as keyof typeof IconList;
     return (
-        <ListItemContainer>
+        <ListItemCard onE>
             <Icon size={"md"}>
                 {IconList[iconKey] ?? <MdCircle/>}
             </Icon>
             {category.name}
-        </ListItemContainer>
+        </ListItemCard>
 
     )
 }

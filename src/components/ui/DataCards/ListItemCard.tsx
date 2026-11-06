@@ -2,7 +2,13 @@ import {HStack, Card, IconButton, Icon} from "@chakra-ui/react";
 import type {ReactNode} from "react";
 import {MdEdit, MdRemove} from "react-icons/md";
 
-const ListItemContainer = ({children}: {children: ReactNode}) => {
+interface ItemCardProps {
+    children: ReactNode
+    onEdit: () => void | Promise<void>;
+    onDelete: () => void | Promise<void>;
+}
+
+const ListItemCard = ({children, onEdit, onDelete}: ItemCardProps) => {
     return (
         <Card.Root>
             <Card.Body>
@@ -11,22 +17,27 @@ const ListItemContainer = ({children}: {children: ReactNode}) => {
                         {children}
                     </HStack>
                     <HStack>
-                        <IconButton>
+                        {onEdit() && <IconButton onClick={onEdit()}>
                             <Icon asChild>
                                 <MdEdit/>
                             </Icon>
-                        </IconButton>
-                        <IconButton colorPalette={"red"}>
+                        </IconButton>}
+
+                        {onDelete() && <IconButton
+                            onClick={onDelete()}
+                            colorPalette={"red"}
+                        >
                             <Icon asChild>
                                 <MdRemove/>
                             </Icon>
-                        </IconButton>
+                        </IconButton>}
+
                     </HStack>
                 </HStack>
             </Card.Body>
 
         </Card.Root>
-        )
+    )
 }
 
-export default  ListItemContainer;
+export default ListItemCard;
