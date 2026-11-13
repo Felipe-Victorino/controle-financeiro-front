@@ -1,39 +1,28 @@
 import "../../styles/Pages.css"
 import PageContainer from "@/components/ui/Containers/PageContainer.tsx";
-import {useEffect} from "react";
 import {useNavigate} from "react-router-dom";
 import DashboardContainer from "@/components/ui/Containers/DashboardContainer.tsx";
 import DashboardTitle from "@/components/ui/DashboardTitle/DashboardTitle.tsx";
 import RecentTransactions from "@/components/ui/DataCards/RecentTransactions.tsx";
 import FinanceSummary from "@/components/ui/DataCards/FinanceSummary.tsx";
-import {Button, Card, Carousel, Heading, IconButton} from "@chakra-ui/react";
+import {Button, Card, Carousel, IconButton} from "@chakra-ui/react";
 import type {LocationLinkCardType} from "@/types/DataCards.ts";
 import {MdArrowBack, MdArrowForward} from "react-icons/md";
+import AuthService from "@/services/AuthService.ts";
 
 const PageDashboard = () => {
-    const navigate = useNavigate();
 
-    const redirectToLogin = () => {
-        if (localStorage.getItem("login") == null) {
-            navigate("/auth/login")
-        }
-    }
-
-    useEffect(() => {
-        redirectToLogin();
-    }, [])
-
+    const username: string = AuthService.instance.getCurrentUsername();
     return (
         <PageContainer>
             <DashboardContainer dashHeader={
                 <DashboardTitle
-                    name={"Dashboard"}
+                    name={`Olá ${username}`}
 
                     body={"Bem vindo ao serviço FinFin, este é seu dashboard"}
                 />
             }
             >
-
                 <ActionsRow/>
                 <FinanceSummary/>
 
@@ -51,9 +40,9 @@ const LocationCard = ({data}: { data: LocationLinkCardType }) => {
         <Card.Root>
             <Card.Body>
                 <Card.Title>
-                    <Heading>
-                        {data.name}
-                    </Heading>
+
+                    {data.name}
+
 
                 </Card.Title>
                 <Card.Description>
@@ -100,7 +89,12 @@ const locations: LocationLinkCardType[] = [
 const ActionsRow = () => {
 
     return (
-        <Carousel.Root slideCount={locations.length} slidesPerPage={3} gap={"0.5rem"}>
+        <Carousel.Root
+            slideCount={locations.length}
+            slidesPerPage={3}
+            gap={"0.5rem"}
+            hideBelow={"md"}
+        >
             <Carousel.Control justifyContent="center" gap="4" width="full">
                 <Carousel.PrevTrigger asChild>
                     <IconButton size="xs" variant="outline">
