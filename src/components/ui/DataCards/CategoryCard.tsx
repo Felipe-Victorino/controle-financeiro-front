@@ -1,4 +1,4 @@
-import type {CategoryDTO} from "@/types/ServerResponseDTO.ts";
+import type {CategoryResponseValues} from "@/types/ServerResponseDTO.ts";
 import {MdCircle, MdFavorite, MdMood, MdStar} from "react-icons/md";
 import {TbLungs} from "react-icons/tb";
 import ListItemCard from "@/components/ui/DataCards/ListItemCard.tsx";
@@ -12,7 +12,7 @@ const IconList = {
 }
 
 interface CategoryCardProps {
-    category: CategoryDTO;
+    category: CategoryResponseValues;
     onEdit: () => void | Promise<void>;
     onDelete: () => void | Promise<void>;
 }
@@ -21,7 +21,7 @@ const CategoryCard = ({category, onEdit, onDelete}: CategoryCardProps) => {
 
     const iconKey = category.icon as keyof typeof IconList;
     return (
-        <ListItemCard onE>
+        <ListItemCard onEdit={onEdit} onDelete={onDelete}>
             <Icon size={"md"}>
                 {IconList[iconKey] ?? <MdCircle/>}
             </Icon>
