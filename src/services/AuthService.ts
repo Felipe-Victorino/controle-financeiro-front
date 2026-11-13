@@ -1,6 +1,6 @@
 import BaseService from "./BaseService";
 import type {AxiosResponse} from "axios";
-import type {LoginValues} from "@/types/Auth/AuthRequests.ts";
+import type {ForgotValues, LoginValues, RegisterValues, ResetValues} from "@/types/Auth/AuthRequests.ts";
 import type {UserType} from "@/types/UserType.ts";
 
 class AuthService extends BaseService {
@@ -22,15 +22,15 @@ class AuthService extends BaseService {
         return this.#instance;
     }
 
-    async requestResetCode(email: string): Promise<AxiosResponse> {
-        return await this.postWithTarget("/forgot-password", {"email": email});
+    async requestResetCode(data: ForgotValues): Promise<AxiosResponse> {
+        return await this.postWithTarget("/forgot-password", data);
     }
 
-    async registerNewUser(data: object): Promise<AxiosResponse> {
+    async registerNewUser(data: RegisterValues): Promise<AxiosResponse> {
         return await this.postWithTarget("/register", data);
     }
 
-    async resetPassword(data: object): Promise<AxiosResponse> {
+    async resetPassword(data: ResetValues): Promise<AxiosResponse> {
         return await this.postWithTarget("/reset-password", data);
     }
 
