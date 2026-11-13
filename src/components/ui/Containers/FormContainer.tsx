@@ -16,8 +16,8 @@ const FormContainer = ({children, backButton}: FormContainerTypes) => {
         return (
 
             <Flex
-                h={{base: "100%", md: "fit-content"}}
-                w={{base: "fit-content"}}
+                h={{base: "fit-content"}}
+                w={{base: "90%", sm: "80%", md: "30em"}}
                 rounded={"md"}
                 shadow={"lg"}
                 padding={"8"}
@@ -32,7 +32,7 @@ const FormContainer = ({children, backButton}: FormContainerTypes) => {
                     </Icon>
                 </IconButton>
 
-                <Flex gap={"3"} direction={"column"} justify={"center"} align={"start"} padding={"8"}>
+                <Flex gap={"2"} direction={"column"} justify={"center"} align={"start"} padding={"8"}>
 
                     {children}
                 </Flex>
@@ -43,19 +43,16 @@ const FormContainer = ({children, backButton}: FormContainerTypes) => {
         return (
 
             <Flex
-                h={{base: "100%", sm: "70%", md: "fit-content"}}
-                w={{base: "fit-content"}}
+                h={{base: "fit-content"}}
+                w={{base: "90%", sm: "80%", md: "30em"}}
                 rounded={"md"}
                 shadow={"lg"}
-                p={"24"}
-
+                p={"16"}
                 backgroundColor={"bg.panel"}
                 direction={"column"}
 
             >
-
-
-                <Flex gap={"3"} direction={"column"} justify={"center"} align={"start"}>
+                <Flex gap={"2"} direction={"column"} justify={"center"} align={"center"}>
 
                     {children}
                 </Flex>
