@@ -1,5 +1,5 @@
 import {CloseButton, Dialog, Portal} from "@chakra-ui/react";
-import type {ReactNode} from "react";
+import {type ReactNode} from "react";
 
 interface ModalDialogProps {
     open: boolean;
@@ -14,6 +14,7 @@ interface ModalDialogProps {
 
 export const ModalDialog = ({
                                 open,
+                                onOpenChange,
                                 role = "dialog",
                                 closeOnInteractOutside,
                                 title,
@@ -25,6 +26,7 @@ export const ModalDialog = ({
     return (
         <Dialog.Root
             open={open}
+            onOpenChange={(e) => onOpenChange(e.open)}
             role={role}
             closeOnInteractOutside={closeOnInteractOutside}
         >
