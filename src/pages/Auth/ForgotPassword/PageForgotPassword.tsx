@@ -1,16 +1,20 @@
 import PageContainer from "@/components/ui/Containers/PageContainer.tsx";
 import FormContainer from "@/components/ui/Containers/FormContainer.tsx";
-import {Button, Field, Fieldset, Heading, Input, Stack} from "@chakra-ui/react";
+import {Button, Heading} from "@chakra-ui/react";
 import React, {useState} from "react";
-import type {ForgotValues} from "@/types/Requests.ts";
-import type {AxiosResponse} from "axios";
-import type {NetworkErrorResponse} from "@/types/ServerErrors.ts";
-import {Toaster, toaster} from "@/components/ui/toaster.tsx";
+import type {ForgotValues} from "@/types/Auth/AuthRequests.ts";
+
+import {toaster} from "@/components/ui/toaster.tsx";
 import AuthService from "@/services/AuthService.ts";
 import {useNavigate} from "react-router-dom";
-import type {AuthForgotResponse} from "@/types/ServerResponse.ts";
+
 import {AuthContainer} from "@/components/ui/Containers/AuthContainer.tsx";
 import {BigLogo} from "@/components/ui/BigLogo/BigLogo.tsx";
+import {FormFieldset} from "@/components/ui/Containers/FormFieldset.tsx";
+import {TextField} from "@/components/ui/Fields/TextField.tsx";
+import {useFormState} from "@/hooks/useFormState.ts";
+import {useRequest} from "@/hooks/useRequest.ts";
+import {findEmptyFields} from "@/hooks/validation.ts";
 
 
 const PageForgotPassword = () => {
@@ -19,20 +23,9 @@ const PageForgotPassword = () => {
             <AuthContainer>
                 <BigLogo/>
                 <FormContainer backButton={true}>
-
-
-
-
-                    <Fieldset.Root>
-                        <Fieldset.Content>
-                            <ForgotPasswordForm/>
-                        </Fieldset.Content>
-                    </Fieldset.Root>
-
-
+                    <ForgotPasswordForm/>
                 </FormContainer>
             </AuthContainer>
-
 
 
         </PageContainer>
@@ -41,119 +34,52 @@ const PageForgotPassword = () => {
 
 const ForgotPasswordForm = () => {
     const navigate = useNavigate();
-    const [user, setUser] = useState<ForgotValues>(
-        {
-            email: "",
-        }
-    )
+    const REQUIRED_FIELDS = ["email"] as const;
+    const {values, handleChange} = useFormState<ForgotValues>({
+        email: ""
+    });
+    const [emptyFields, setEmptyFields] = useState<(keyof ForgotValues)[]>([]);
 
-    const [error, setError] = useState(
-        {
-            email: false,
-        }
-    )
-    const [loading, setLoading] = useState(false)
-    const [errorResponse, setErrorResponse] = useState<NetworkErrorResponse>(
-        {
-            status: 400,
-            message: "Um erro ocorreu",
-            dateTime: new Date().toISOString(),
-            isNetworkIssue: false
-        }
-    )
+    const {loading, run, error} = useRequest((err) =>
+        toaster.create({type: "error", title: err.message, duration: 3000}),
+    );
 
-    const verifyFields = () => {
-        let hasError: boolean = false;
-        const errors = {
-            email: false
-        }
-        if (user.email == "") {
-            errors.email = true
-            hasError = true;
-        }
-        setError(errors)
-        return hasError;
-    }
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setUser({...user, [e.target.name]: e.target.value});
-    }
-
-    const onSubmit = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const onSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault()
+        const empty = findEmptyFields(values, [...REQUIRED_FIELDS]);
+        setEmptyFields(empty);
 
-        if (verifyFields()) {
-            return;
-        }
-
-        setLoading(true);
-
-        try {
-            const response = await AuthService.instance.requestResetCode(user.email) as AxiosResponse;
-            const message = response.data as AuthForgotResponse
-            console.log(message)
+        await run(async () => {
+            const response
+                = await AuthService.instance.requestResetCode(values);
             if (response) {
-                navigate("/auth/reset")
+                navigate("/login");
             }
-
-        } catch (e: unknown) {
-            const err = e as NetworkErrorResponse;
-            console.log(err)
-            setErrorResponse(err)
-            toaster.create(
-                {
-                    type: "error",
-                    title: errorResponse.message,
-                    duration: 3000
-                }
-            )
-
-        } finally {
-            setLoading(false)
-        }
+        });
 
     }
 
 
     return (
-        <Fieldset.Root>
-            <Fieldset.Legend>
-                <Heading>
-                    Esqueci minha senha:
-                </Heading>
+        <FormFieldset
+            legend={<Heading>Login</Heading>}
+            helperText="Preencha os campos abaixo para entrar na sua conta"
+            errorText="Preencha todos os campos"
+            invalid={!!error}
+            onSubmit={onSubmit}
 
-            </Fieldset.Legend>
-            <Fieldset.HelperText>
-                Por favor, insira no campo abaixo o email associado a sua conta, para podermos verificar sua
-                identidade
-            </Fieldset.HelperText>
-            <Fieldset.Content>
-
-        <form>
-            <Stack gap="4" align="flex-start" maxW="100%">
-                <Field.Root invalid={error.email} required>
-                    <Field.Label>Email:<Field.RequiredIndicator/></Field.Label>
-                    <Input
-                        value={user.email}
-                        name={"email"}
-                        onChange={(e) => {
-                            handleChange(e)
-                        }}/>
-                    <Field.ErrorText>Email necessário</Field.ErrorText>
-                </Field.Root>
-
-                <Button
-                    w={"100%"}
-                    loading={loading}
-                    type="submit"
-                    onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => (onSubmit(e))}>
-                    Entrar
-                </Button>
-            </Stack>
-            <Toaster/>
-        </form>
-            </Fieldset.Content>
-        </Fieldset.Root>
+        >
+            <TextField
+                label="Email" name="email" type="email" required
+                value={values.email} onChange={handleChange}
+                invalid={emptyFields.includes("email")}
+                errorText="Email necessário"
+            />
+            <Button w="100%" type="submit" loading={loading}>
+                Recuperar senha
+            </Button>
+        </FormFieldset>
     )
 }
 

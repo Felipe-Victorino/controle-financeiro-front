@@ -1,24 +1,23 @@
 import PageContainer from "@/components/ui/Containers/PageContainer.tsx";
-import {Button, Field, Fieldset, Flex, Heading, Input} from "@chakra-ui/react";
+import {Button, Heading} from "@chakra-ui/react";
 
 import React, {useMemo, useState} from "react";
-import type {NetworkErrorResponse} from "@/types/ServerErrors.ts";
-import {PasswordInput, PasswordStrengthMeter} from "@/components/ui/password-input.tsx";
-import {toaster, Toaster} from "@/components/ui/toaster.tsx";
+import {PasswordStrengthMeter} from "@/components/ui/password-input.tsx";
+import {toaster} from "@/components/ui/toaster.tsx";
 import AuthService from "@/services/AuthService.ts";
 import FormContainer from "@/components/ui/Containers/FormContainer.tsx";
 import {useNavigate} from "react-router-dom";
-import {type Options, passwordStrength} from "check-password-strength";
+import {passwordStrength} from "check-password-strength";
 import {AuthContainer} from "@/components/ui/Containers/AuthContainer.tsx";
 import {BigLogo} from "@/components/ui/BigLogo/BigLogo.tsx";
-
-
-interface RegisterValues {
-    name: string,
-    email: string,
-    passwd: string
-    passwdConfirm: string
-}
+import {useFormState} from "@/hooks/useFormState.ts";
+import {useRequest} from "@/hooks/useRequest.ts";
+import {findEmptyFields} from "@/hooks/validation.ts";
+import {FormFieldset} from "@/components/ui/Containers/FormFieldset.tsx";
+import {TextField} from "@/components/ui/Fields/TextField.tsx";
+import {PasswordField} from "@/components/ui/Fields/PasswordField.tsx";
+import {strengthOptions} from "@/types/PasswordStrengthValues.ts";
+import type {RegisterValues} from "@/types/Auth/AuthRequests.ts";
 
 const PageRegister = () => {
     return (
@@ -26,255 +25,85 @@ const PageRegister = () => {
             <AuthContainer>
                 <BigLogo/>
                 <FormContainer backButton={true}>
-
-
-
-
                     <PageRegisterForm/>
-
-
                 </FormContainer>
             </AuthContainer>
-
-
-
         </PageContainer>
     )
 }
 
 
-const strengthOptions: Options<string> = [
-    {
-        id: 1,
-        value: "Fraca",
-        minDiversity: 0,
-        minLength: 0
-    },
-    {
-        id: 2,
-        value: "Medíocre",
-        minDiversity: 2,
-        minLength: 6
-    },
-    {
-        id: 3,
-        value: "Forte",
-        minDiversity: 3,
-        minLength: 8
-    },
-    {
-        id: 4,
-        value: "Muito forte",
-        minDiversity: 4,
-        minLength: 10
-    },
-]
-
-
+const REQUIRED_FIELDS = ["name", "email", "passwd", "passwdConfirm"] as const;
 const PageRegisterForm = () => {
-    const navigate = useNavigate()
-    const [user, setUser] = useState<RegisterValues>(
-        {
-            name: '',
-            email: '',
-            passwd: '',
-            passwdConfirm: ''
-        }
-    )
+    const navigate = useNavigate();
+    const {values, handleChange} = useFormState<RegisterValues>({
+        name: "", email: "", passwd: "", passwdConfirm: "",
+    });
+    const [emptyFields, setEmptyFields] = useState<(keyof RegisterValues)[]>([]);
+    const [mismatch, setMismatch] = useState(false);
 
-    const [error, setError] = useState(
-        {
-            name: false,
-            email: false,
-            passwd: false,
-            passwdConfirm: false,
-            notEqual: false
-        }
-    )
+    const {loading, run} = useRequest((err) =>
+        toaster.create({type: "error", title: err.message, duration: 3000}),
+    );
 
-    const strength = useMemo(() => {
-        if (!user.passwd) return 0
-        const result = passwordStrength(user.passwd, strengthOptions)
-        return result.id
-    }, [user.passwd])
+    const strength = useMemo(
+        () => (values.passwd ? passwordStrength(values.passwd, strengthOptions).id : 0),
+        [values.passwd],
+    );
 
-    const [loading, setLoading] = useState(false);
-    const [success, setSuccess] = useState("")
-    const [errorResponse, setErrorResponse] = useState<NetworkErrorResponse>(
-        {
-            status: 400,
-            message: "Um erro ocorreu",
-            dateTime: new Date().toISOString(),
-            isNetworkIssue: false
-        }
-    )
-
-    const onSubmit = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const onSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (validateEmptyFields()) {
-            return;
-        }
 
-        if (strength == 0) {
-            return;
-        }
+        const empty = findEmptyFields(values, [...REQUIRED_FIELDS]);
+        const notEqual = values.passwd !== values.passwdConfirm;
+        setEmptyFields(empty);
+        setMismatch(notEqual);
+        if (empty.length > 0 || notEqual) return;
 
-        setLoading(true)
-
-        try {
-            const success = await AuthService.instance.registerNewUser(user)
-
-            if (success) {
+        await run(async () => {
+            const created
+                = await AuthService.instance.registerNewUser(values);
+            if (created) {
+                toaster.create({type: "success", title: "Cadastro realizado com sucesso.", duration: 3000});
                 navigate("/login");
             }
-            setSuccess('Cadastro realizado com sucesso.');
-
-
-        } catch (e: unknown) {
-            const err = e as NetworkErrorResponse;
-            console.log(err)
-            setErrorResponse(err)
-            toaster.create(
-                {
-                    type: "error",
-                    title: errorResponse.message,
-                    duration: 3000
-                }
-            )
-        } finally {
-            setLoading(false);
-        }
-        console.log(error);
-        console.log(success)
-
-
-    }
-
-    const validateEmptyFields = () => {
-        let hasError: boolean = false;
-        const errors = {
-            name: false,
-            email: false,
-            passwd: false,
-            passwdConfirm: false,
-            notEqual: false
-        }
-        if (user.name == '') {
-            hasError = true;
-            errors.name = true;
-        }
-
-        if (user.email == "") {
-            hasError = true;
-            errors.email = true;
-        }
-        if (user.passwd == "") {
-            hasError = true;
-            errors.passwd = true;
-        }
-        if (user.passwdConfirm == "") {
-            hasError = true;
-            errors.passwdConfirm = true;
-        }
-
-        if (user.passwdConfirm != user.passwd) {
-            hasError = true;
-            errors.notEqual = true;
-        }
-
-        setError(errors);
-        return hasError;
+        });
     };
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setUser({...user, [e.target.name]: e.target.value});
-    }
-
     return (
-        <form>
-            <Fieldset.Root invalid={error.notEqual}>
-
-                <Fieldset.Legend>
-
-
-                        <Heading>
-                            Criação de conta
-                        </Heading>
-
-
-
-
-                </Fieldset.Legend>
-                <Fieldset.HelperText>
-                    Preencha os campos abaixo para criar uma conta nova
-                </Fieldset.HelperText>
-                <Fieldset.Content>
-                    <Flex gap="4" align="flex-start" justify={"stretch"} direction={"column"}>
-
-                        <Field.Root invalid={error.name} required>
-                            <Field.Label>Nome:<Field.RequiredIndicator/></Field.Label>
-                            <Input
-                                value={user.name}
-                                name={"name"}
-                                onChange={(e) => {
-                                    handleChange(e)
-                                }}/>
-                            <Field.ErrorText>Email necessário</Field.ErrorText>
-                        </Field.Root>
-
-                        <Field.Root invalid={error.email} required>
-                            <Field.Label>Email:<Field.RequiredIndicator/></Field.Label>
-                            <Input
-                                value={user.email}
-                                name={"email"}
-                                onChange={(e) => {
-                                    handleChange(e)
-                                }}/>
-                            <Field.ErrorText>Email necessário</Field.ErrorText>
-                        </Field.Root>
-
-                        <Field.Root invalid={error.passwd} required>
-                            <Field.Label>Senha:<Field.RequiredIndicator/></Field.Label>
-                            <PasswordInput
-                                value={user.passwd}
-                                name={"passwd"}
-                                onChange={(e) => {
-                                    handleChange(e)
-                                }}/>
-                            <Field.ErrorText>Senha necessária</Field.ErrorText>
-
-                        </Field.Root>
-
-                        <PasswordStrengthMeter value={strength} w={"100%"}/>
-
-                        <Field.Root invalid={error.passwdConfirm} required>
-                            <Field.Label>Confirme a senha: <Field.RequiredIndicator/></Field.Label>
-                            <PasswordInput
-                                value={user.passwdConfirm}
-                                name={"passwdConfirm"}
-                                onChange={(e) => {
-                                    handleChange(e)
-                                }}/>
-                            <Field.ErrorText>Senha necessária</Field.ErrorText>
-                        </Field.Root>
-
-                        <Button
-                            w={"100%"}
-                            loading={loading}
-                            type="submit"
-                            onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => (onSubmit(e))}>
-                            Entrar
-                        </Button>
-                    </Flex>
-                </Fieldset.Content>
-                <Fieldset.ErrorText>
-                    A confirmação de senha deve ser igual à senha
-                </Fieldset.ErrorText>
-            </Fieldset.Root>
-
-            <Toaster/>
-        </form>
-    )
+        <FormFieldset
+            legend={<Heading>Criação de conta</Heading>}
+            helperText="Preencha os campos abaixo para criar uma conta nova"
+            errorText="A confirmação de senha deve ser igual à senha"
+            invalid={mismatch}
+            onSubmit={onSubmit}
+        >
+            <TextField
+                label="Nome" name="name" required
+                value={values.name} onChange={handleChange}
+                invalid={emptyFields.includes("name")} errorText="Nome necessário"
+            />
+            <TextField
+                label="Email" name="email" type="email" required
+                value={values.email} onChange={handleChange}
+                invalid={emptyFields.includes("email")} errorText="Email necessário"
+            />
+            <PasswordField
+                label="Senha" name="passwd" required
+                value={values.passwd} onChange={handleChange}
+                invalid={emptyFields.includes("passwd")} errorText="Senha necessária"
+            />
+            <PasswordStrengthMeter value={strength} w="100%"/>
+            <PasswordField
+                label="Confirme a senha" name="passwdConfirm" required
+                value={values.passwdConfirm} onChange={handleChange}
+                invalid={emptyFields.includes("passwdConfirm")} errorText="Confirmação necessária"
+            />
+            <Button w="100%" type="submit" loading={loading}>
+                Criar conta
+            </Button>
+        </FormFieldset>
+    );
 }
 
 export default PageRegister

@@ -1,16 +1,24 @@
 import PageContainer from "@/components/ui/Containers/PageContainer.tsx";
 import FormContainer from "@/components/ui/Containers/FormContainer.tsx";
-import {Button, Field, Fieldset,  Heading, Input, Stack} from "@chakra-ui/react";
-import React, {useState} from "react";
-import type {ResetValues} from "@/types/Requests.ts";
-import {PasswordInput} from "@/components/ui/password-input.tsx";
-import type {NetworkErrorResponse} from "@/types/ServerErrors.ts";
-import {Toaster, toaster} from "@/components/ui/toaster.tsx";
+import {Button, Heading,} from "@chakra-ui/react";
+import React, {useMemo, useState} from "react";
+import type {ResetValues} from "@/types/Auth/AuthRequests.ts";
+import {PasswordStrengthMeter} from "@/components/ui/password-input.tsx";
+
+import {toaster} from "@/components/ui/toaster.tsx";
 import AuthService from "@/services/AuthService.ts";
 import {useNavigate} from "react-router-dom";
-import type {AuthResetResponse} from "@/types/ServerResponse.ts";
+
 import {AuthContainer} from "@/components/ui/Containers/AuthContainer.tsx";
 import {BigLogo} from "@/components/ui/BigLogo/BigLogo.tsx";
+import {useFormState} from "@/hooks/useFormState.ts";
+import {useRequest} from "@/hooks/useRequest.ts";
+import {passwordStrength} from "check-password-strength";
+import {strengthOptions} from "@/types/PasswordStrengthValues.ts";
+import {findEmptyFields} from "@/hooks/validation.ts";
+import {FormFieldset} from "@/components/ui/Containers/FormFieldset.tsx";
+import {TextField} from "@/components/ui/Fields/TextField.tsx";
+import {PasswordField} from "@/components/ui/Fields/PasswordField.tsx";
 
 
 const PageResetPassword = () => {
@@ -21,18 +29,11 @@ const PageResetPassword = () => {
                 <FormContainer backButton={true}>
 
 
-
-
-                    <Fieldset.Root>
-                        <Fieldset.Content>
-                            <ResetPasswordForm/>
-                        </Fieldset.Content>
-                    </Fieldset.Root>
+                    <ResetPasswordForm/>
 
 
                 </FormContainer>
             </AuthContainer>
-
 
 
         </PageContainer>
@@ -41,152 +42,75 @@ const PageResetPassword = () => {
 
 const ResetPasswordForm = () => {
     const navigate = useNavigate();
-    const [user, setUser] = useState<ResetValues>(
-        {
-            token: "",
-            newPasswd: "",
-            confirmPasswd: ""
-        }
-    )
+    const REQUIRED_FIELDS = ["token", "newPasswd", "confirmPasswd"] as const;
+    const {values, handleChange} = useFormState<ResetValues>({
+        token: "",
+        newPasswd: "",
+        confirmPasswd: ""
+    })
 
-    const [error, setError] = useState(
-        {
-            token: false,
-            newPasswd: false,
-            confirmPasswd: false
-        }
-    )
-    const [loading, setLoading] = useState(false);
+    const [emptyFields, setEmptyFields] = useState<(keyof ResetValues)[]>([]);
+    const [mismatch, setMismatch] = useState(false);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setUser({...user, [e.target.name]: e.target.value});
-    }
+    const {loading, run} = useRequest((err) =>
+        toaster.create({type: "error", title: err.message, duration: 3000}),
+    );
 
-    const verifyFields = () => {
-        let hasError: boolean = false
-        const errors = {
-            token: false,
-            newPasswd: false,
-            confirmPasswd: false
-        }
+    const strength = useMemo(
+        () => (values.newPasswd ? passwordStrength(values.newPasswd, strengthOptions).id : 0),
+        [values.newPasswd],
+    );
 
-        if (user.token == "") {
-            errors.token = true
-            hasError = true;
-        }
-
-        if (user.newPasswd == "") {
-            errors.newPasswd = true
-            hasError = true;
-        }
-
-        if (user.newPasswd != user.confirmPasswd) {
-            errors.confirmPasswd = true
-            hasError = true;
-        }
-        setError(errors)
-        return hasError;
-    }
-
-    const onSubmit = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const onSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault()
+        const empty = findEmptyFields(values, [...REQUIRED_FIELDS]);
+        const notEqual = values.newPasswd !== values.confirmPasswd;
+        setEmptyFields(empty);
+        setMismatch(notEqual);
+        if (empty.length > 0 || notEqual) return;
 
-        if (verifyFields()) {
-            return;
-        }
+        await run(async () => {
+            const response
+                = await AuthService.instance.resetPassword(values)
+            if (response) {
 
-        setLoading(true);
+                toaster.create({type: "success", title: "Senha alterada com sucesso.", duration: 3000});
 
-        try {
-            const response = await AuthService.instance.resetPassword(user);
-            const message = response.data as AuthResetResponse
-            console.log(message)
-            toaster.create({
-                type: "success",
-                title: message.message,
-                duration: 3000
-            })
-            setTimeout(() => {
-                navigate("/auth/login")
-            }, 1000)
-        } catch (e: unknown) {
-            const err = e as NetworkErrorResponse;
-            console.log(err)
-
-            toaster.create(
-                {
-                    type: "error",
-                    title: err.message,
-                    duration: 3000
-                }
-            )
-
-        } finally {
-            setLoading(false)
-        }
+                navigate("/login")
+            }
+        })
 
     }
 
 
     return (
-        <Fieldset.Root>
-            <Fieldset.Legend>
-                <Heading>
-                    Um token de recuperação de senha foi enviado ao seu email
-                </Heading>
-
-            </Fieldset.Legend>
-            <Fieldset.HelperText>
-                Por favor, insira o token de 32 dígitos abaixo e altere a sua senha
-            </Fieldset.HelperText>
-            <Fieldset.Content>
-        <form>
-            <Stack gap="4" align="flex-start" maxW="100%">
-                <Field.Root invalid={error.token} required>
-                    <Field.Label>Token:<Field.RequiredIndicator/></Field.Label>
-                    <Input
-                        value={user.token}
-                        name={"token"}
-                        onChange={(e) => {
-                            handleChange(e)
-                        }}/>
-                    <Field.ErrorText>Token de recuperação de senha necessário</Field.ErrorText>
-                </Field.Root>
-
-                <Field.Root invalid={error.newPasswd} required>
-                    <Field.Label>Senha nova: <Field.RequiredIndicator/></Field.Label>
-                    <PasswordInput
-                        value={user.newPasswd}
-                        name={"newPasswd"}
-                        onChange={(e) => {
-                            handleChange(e)
-                        }}/>
-                    <Field.ErrorText>Senha necessária</Field.ErrorText>
-                </Field.Root>
-
-                <Field.Root invalid={error.confirmPasswd} required>
-                    <Field.Label>Confirme a senha: <Field.RequiredIndicator/></Field.Label>
-                    <PasswordInput
-                        value={user.confirmPasswd}
-                        name={"confirmPasswd"}
-                        onChange={(e) => {
-                            handleChange(e)
-                        }}/>
-                    <Field.ErrorText>Confirme a sua senha</Field.ErrorText>
-                </Field.Root>
-
-                <Button
-                    w={"100%"}
-                    loading={loading}
-                    type="submit"
-                    onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => (onSubmit(e))}>
-                    Entrar
-                </Button>
-            </Stack>
-            <Toaster/>
-        </form>
-            </Fieldset.Content>
-        </Fieldset.Root>
+        <FormFieldset
+            legend={<Heading>Crie uma nova senha:</Heading>}
+            helperText="Insira o token de recuperação enviado no seu email para criar uma nova senha"
+            errorText="A confirmação de senha deve ser igual à senha"
+            invalid={mismatch}
+            onSubmit={onSubmit}
+        >
+            <TextField
+                label="Token de recuperação" name="token" required
+                value={values.token} onChange={handleChange}
+                invalid={emptyFields.includes("token")} errorText="Token necessário"
+            />
+            <PasswordField
+                label="Senha" name="passwd" required
+                value={values.newPasswd} onChange={handleChange}
+                invalid={emptyFields.includes("newPasswd")} errorText="Senha necessária"
+            />
+            <PasswordStrengthMeter value={strength} w="100%"/>
+            <PasswordField
+                label="Confirme a senha" name="confirmPassword" required
+                value={values.confirmPasswd} onChange={handleChange}
+                invalid={emptyFields.includes("confirmPasswd")} errorText="Confirmação necessária"
+            />
+            <Button w="100%" type="submit" loading={loading}>
+                Alterar senha
+            </Button>
+        </FormFieldset>
     )
 }
 

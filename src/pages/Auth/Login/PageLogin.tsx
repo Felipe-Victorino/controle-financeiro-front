@@ -1,25 +1,27 @@
 import PageContainer from "@/components/ui/Containers/PageContainer.tsx";
 import {
     Button,
-    Field,
-    Fieldset,
-    Input,
+    Fieldset, Heading,
     Link as ChakraLink,
-    Stack,
+
 } from "@chakra-ui/react";
 import React, {useState} from "react";
-import {PasswordInput} from "@/components/ui/password-input.tsx";
-import type {AxiosResponse} from "axios";
-import type {NetworkErrorResponse} from "@/types/ServerErrors.ts";
-import {Link, useNavigate} from "react-router-dom";
-import type {LoginValues} from "@/types/Requests.ts";
 
-import {Toaster, toaster} from "@/components/ui/toaster.tsx";
+import {Link, useNavigate} from "react-router-dom";
+import type {LoginValues} from "@/types/Auth/AuthRequests.ts";
+
+import {toaster} from "@/components/ui/toaster.tsx";
 import FormContainer from "@/components/ui/Containers/FormContainer.tsx";
 import AuthService from "@/services/AuthService.ts";
-import type {AuthLoginResponse} from "@/types/ServerResponse.ts";
 import {BigLogo} from "@/components/ui/BigLogo/BigLogo.tsx";
 import {AuthContainer} from "@/components/ui/Containers/AuthContainer.tsx";
+import {findEmptyFields} from "@/hooks/validation.ts";
+import {useFormState} from "@/hooks/useFormState.ts";
+import {useRequest} from "@/hooks/useRequest.ts";
+
+import {FormFieldset} from "@/components/ui/Containers/FormFieldset.tsx";
+import {TextField} from "@/components/ui/Fields/TextField.tsx";
+import {PasswordField} from "@/components/ui/Fields/PasswordField.tsx";
 
 
 const PageLogin = () => {
@@ -28,150 +30,77 @@ const PageLogin = () => {
             <AuthContainer>
                 <BigLogo/>
                 <FormContainer backButton={false}>
-
-
-
-
-                        <Fieldset.Root>
-                            <Fieldset.Content>
-                                <PageLoginForm/>
-                            </Fieldset.Content>
-                        </Fieldset.Root>
-
-
+                    <Fieldset.Root>
+                        <Fieldset.Content>
+                            <PageLoginForm/>
+                        </Fieldset.Content>
+                    </Fieldset.Root>
                 </FormContainer>
             </AuthContainer>
-
-
-
         </PageContainer>
     )
 }
 
 const PageLoginForm = () => {
     const navigate = useNavigate();
-    const [user, setUser] = useState<LoginValues>(
-        {
-            email: '',
-            passwd: '',
-        }
-    )
+    const REQUIRED_FIELDS = ["email", "passwd"] as const;
+    const {values, handleChange} = useFormState<LoginValues>({
+        email: "", passwd: ""
+    });
+    const [emptyFields, setEmptyFields] = useState<(keyof LoginValues)[]>([]);
 
-    const [error, setError] = useState(
-        {
-            email: false,
-            passwd: false,
-        }
-    )
-    const [loading, setLoading] = useState(false);
+    const {loading, run, error} = useRequest((err) =>
+        toaster.create({type: "error", title: err.message, duration: 3000}),
+    );
 
-    const verifyFields: () => boolean = () => {
-        let hasError: boolean = false;
-        const errors = {
-            email: false,
-            passwd: false
-        }
 
-        if (user.email == '') {
-            hasError = true;
-            errors.email = true
-        }
-
-        if (user.passwd == '') {
-            hasError = true;
-            errors.passwd = true
-        }
-
-        setError(errors)
-        return hasError;
-    }
-
-    const onSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const onSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault()
-        if (verifyFields()) {
-            return;
-        }
-        setLoading(true);
-        setTimeout(async () => {
-            try {
-                const response = await AuthService.instance.login(user) as AxiosResponse;
+        const empty = findEmptyFields(values, [...REQUIRED_FIELDS]);
+        setEmptyFields(empty);
 
-                const data = response as unknown as AuthLoginResponse;
-                if (response) {
-                    localStorage.setItem("name", data.name)
-                    localStorage.setItem("login", "true")
-                    navigate("/home");
-                }
-
-            } catch (e: unknown) {
-                const err = e as NetworkErrorResponse;
-                console.log(err);
-                toaster.create(
-                    {
-                        type: "error",
-                        title: err.message,
-                        duration: 3000
-                    }
-                );
-
-            } finally {
-                setLoading(false);
+        await run(async () => {
+            const created
+                = await AuthService.instance.login(values);
+            if (created) {
+                navigate("/home");
             }
-        }, 500)
+        });
 
-    }
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setUser({...user, [e.target.name]: e.target.value});
     }
 
     return (
-        <Fieldset.Root>
-            <Fieldset.Content>
-                <form>
-                    <Stack gap="4" align="center" maxW="sm">
+        <FormFieldset
+            legend={<Heading>Login</Heading>}
+            helperText="Preencha os campos abaixo para entrar na sua conta"
+            errorText="Preencha todos os campos"
+            invalid={!!error}
+            onSubmit={onSubmit}
+        >
 
-                        <Field.Root invalid={error.email} required>
-                            <Field.Label>Email <Field.RequiredIndicator/></Field.Label>
-                            <Input
-                                value={user.email}
-                                name={"email"}
-                                onChange={(e) => {
-                                    handleChange(e)
-                                }}/>
-                            <Field.ErrorText>Email necessário</Field.ErrorText>
-                        </Field.Root>
+            <TextField
+                label="Email" name="email" type="email" required
+                value={values.email} onChange={handleChange}
+                invalid={emptyFields.includes("email")}
+                errorText="Email necessário"
+            />
+            <PasswordField
+                label="Senha" name="passwd" required
+                value={values.passwd} onChange={handleChange}
+                invalid={emptyFields.includes("passwd")}
+                errorText="Senha necessária"
+            />
 
-                        <Field.Root invalid={error.passwd} required>
-                            <Field.Label>Senha <Field.RequiredIndicator/></Field.Label>
-                            <PasswordInput
-                                value={user.passwd}
-                                name={"passwd"}
-                                onChange={(e) => {
-                                    handleChange(e)
-                                }}/>
-                            <Field.ErrorText>Senha necessária</Field.ErrorText>
-                        </Field.Root>
-
-                        <Button
-                            w={"100%"}
-                            loading={loading}
-                            type="submit"
-                            onClick={(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => (onSubmit(e))}>
-                            Entrar
-                        </Button>
-
-                        <ChakraLink asChild>
-                            <Link to={"/forgot"}>Esqueci minha senha</Link>
-                        </ChakraLink>
-                        <ChakraLink asChild>
-                            <Link to={"/signin"}>Criar uma conta</Link>
-                        </ChakraLink>
-                    </Stack>
-                    <Toaster/>
-                </form>
-            </Fieldset.Content>
-        </Fieldset.Root>
+            <Button w="100%" type="submit" loading={loading}>
+                Entrar
+            </Button>
+            <ChakraLink asChild>
+                <Link to={"/forgot"}>Esqueci minha senha</Link>
+            </ChakraLink>
+            <ChakraLink asChild>
+                <Link to={"/signin"}>Criar uma conta</Link>
+            </ChakraLink>
+        </FormFieldset>
 
 
     )
