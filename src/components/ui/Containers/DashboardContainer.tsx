@@ -10,6 +10,8 @@ interface DashStructure {
 const DashboardContainer = ({dashHeader, children}: DashStructure) => {
     return (
         <Stack
+            paddingTop={6}
+            padding={8}
             justify={"stretch"}
             align={"stretch"}
         >
