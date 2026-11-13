@@ -21,7 +21,7 @@ abstract class BaseService {
     }
 
     async put(id: number, data: object) {
-        return await api.put(`${this.endPoint}${id}`, data);
+        return await api.put(`${this.endPoint}/${id}`, data);
     }
 
     async putWithTarget(target: string, data: object | null) {
