@@ -14,11 +14,12 @@ import {
 import {MdCategory, MdHome, MdLogout, MdMenu, MdSettings, MdSwapHoriz, MdWallet} from "react-icons/md";
 import {useNavigate} from "react-router-dom";
 import React from "react";
+import AuthService from "@/services/AuthService.ts";
 
 const HeaderDrawer = () => {
     const navigate = useNavigate();
 
-    const username = localStorage.getItem("name") || "Wayne";
+    const username = AuthService.instance.getCurrentUsername() || "Wayne";
 
     const navLinks = [
         {name: "Página Inicial", link: "/home", icon: <MdHome/>},
@@ -28,11 +29,12 @@ const HeaderDrawer = () => {
         {name: "Configurações", link: "/settings", icon: <MdSettings/>}
     ]
 
-    const logOut = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const logOut =  async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault();
+        await AuthService.instance.logout();
         localStorage.clear();
         sessionStorage.clear();
-        navigate("/");
+        navigate("/login");
     }
 
     return (
