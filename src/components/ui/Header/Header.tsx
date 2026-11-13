@@ -49,11 +49,11 @@ const PageHeader = () => {
 
                 <HStack>
                     <ChakraLink asChild>
-                        <Link to={"/auth/login"}>Logar</Link>
+                        <Link to={"/login"}>Logar</Link>
                     </ChakraLink>
 
                     <ChakraLink asChild>
-                        <Link to={"/auth/signin"}>Registrar</Link>
+                        <Link to={"/signin"}>Registrar</Link>
                     </ChakraLink>
                 </HStack>
             </Flex>
@@ -70,7 +70,8 @@ const PageHeader = () => {
 
                 align={"center"}
             >
-                <HeaderLogo homepage={"/dash"}/>
+                <HeaderLogo homepage={"/home" +
+                    ""}/>
 
                 <HStack>
                     <ColorModeButton/>
