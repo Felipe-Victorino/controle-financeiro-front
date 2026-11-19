@@ -32,6 +32,10 @@ abstract class BaseService {
         return await api.delete(`${this.endPoint}/${id}`);
     }
 
+    async deleteWithTarget(target: string, id:number){
+        return await api.delete(`${this.endPoint}${target}/${id}`);
+    }
+
     async getWithTarget(target: string) {
         return await api.get(this.endPoint + target);
     }
