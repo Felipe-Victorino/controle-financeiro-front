@@ -8,6 +8,13 @@ export interface CategoryResponseValues {
 
 }
 
+export interface UserResponseValues {
+    name: string,
+    email: string,
+    authorities: string[],
+    createdIn: string
+}
+
 export interface WalletMemberResponseValues {
     id: number
     walletId: string,
@@ -31,5 +38,8 @@ export interface TransactionResponseValues {
     categoryId: number,
     type: "RECEIPT" | "EXPENSE",
     value: number,
-    description: string
+    description: string | null
+    dateTransaction: string; // "2026-11-12"
+    createdBy: string;
+    createdIn: string;
 }
