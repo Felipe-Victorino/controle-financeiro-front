@@ -1,4 +1,3 @@
-import "../../styles/Pages.css"
 import PageContainer from "@/components/ui/Containers/PageContainer.tsx";
 import {useNavigate} from "react-router-dom";
 import DashboardContainer from "@/components/ui/Containers/DashboardContainer.tsx";
@@ -16,12 +15,12 @@ const PageDashboard = () => {
     return (
         <PageContainer>
             <DashboardContainer dashHeader={
-                <DashboardTitle
-                    name={`Olá ${username}`}
+                                     <DashboardTitle
+                                        name={`Olá ${username}`}
 
-                    body={"Bem vindo ao serviço FinFin, este é seu dashboard"}
-                />
-            }
+                                        body={"Bem vindo ao serviço FinFin, este é seu dashboard"}
+                                    />
+                                }
             >
                 <ActionsRow/>
                 <FinanceSummary/>
