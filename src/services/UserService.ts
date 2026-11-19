@@ -1,20 +1,24 @@
 import BaseService from "./BaseService";
 
-class UserService extends BaseService{
+class UserService extends BaseService {
 
-  static #instance: UserService;
+    static #instance: UserService;
 
-  private constructor(){
-    super('/user');
-  }
-
-  public static get instance(){
-    if(!UserService.#instance){
-      this.#instance = new UserService();
+    private constructor() {
+        super('users/me');
     }
 
-    return this.#instance;
-  }
+    public static get instance() {
+        if (!UserService.#instance) {
+            this.#instance = new UserService();
+        }
+
+        return this.#instance;
+    }
+
+    async getAuthenticatedUserData() {
+        return this.get();
+    }
 }
 
 export default UserService;
