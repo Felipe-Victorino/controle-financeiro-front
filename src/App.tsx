@@ -15,6 +15,9 @@ import AuthRoute from "@/components/PublicRoute.tsx";
 import PrivateRoute from "@/components/PrivateRoute.tsx";
 import AuthService from "@/services/AuthService.ts";
 import {Toaster} from "@/components/ui/toaster.tsx";
+import PageUser from "@/pages/User/PageUser.tsx";
+import {PageWallets} from "@/pages/Wallets/PageWallets.tsx";
+import PageTransactions from "@/pages/Transactions/PageTransactions.tsx";
 
 function App() {
 
@@ -38,13 +41,18 @@ function App() {
 
                     <Route index path={"/"} element={indexElement}></Route>
 
-                    <Route path="login" element={<AuthRoute><PageLogin/></AuthRoute> }/>
+                    <Route path="login" element={<AuthRoute><PageLogin/></AuthRoute>}/>
                     <Route path="signin" element={<AuthRoute><PageRegister/></AuthRoute>}/>
                     <Route path="forgot" element={<AuthRoute><PageForgotPassword/></AuthRoute>}/>
                     <Route path="reset" element={<AuthRoute><PageResetPassword/></AuthRoute>}/>
 
                     <Route path="home" element={<PrivateRoute><PageDashboard/></PrivateRoute>}/>
+
+                    <Route path={"user"} element={<PrivateRoute><PageUser/></PrivateRoute>}/>
                     <Route path={"categories"} element={<PrivateRoute><PageCategories/></PrivateRoute>}/>
+
+                    <Route path={"wallets"} element={<PrivateRoute><PageWallets/></PrivateRoute>}/>
+                    <Route path={"transactions"} element={<PrivateRoute><PageTransactions/></PrivateRoute>}/>
 
 
                 </Routes>
