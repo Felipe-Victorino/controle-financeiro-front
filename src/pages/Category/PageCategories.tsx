@@ -11,7 +11,7 @@ import {useRequest} from "@/hooks/useRequest.ts";
 import {ModalDialog} from "@/components/ui/ModalDialog/ModalDialog.tsx";
 import CategoryForm from "@/pages/Category/form/CategoryForm.tsx";
 import {ConfirmDialog} from "@/components/ui/ModalDialog/ConfirmDialog.tsx";
-import {EMPTY_CATEGORY} from "@/pages/Category/types/CategoryTypes.ts";
+import {EMPTY_CATEGORY} from "@/types/Category/CategoryTypes.ts";
 import type {InfoField} from "@/components/ui/InfoList/InfoList.tsx";
 import {DataCard} from "@/components/ui/InfoList/DataCard.tsx";
 

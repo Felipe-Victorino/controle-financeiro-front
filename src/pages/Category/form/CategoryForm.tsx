@@ -4,7 +4,7 @@ import {FormFieldset} from "@/components/ui/Containers/FormFieldset.tsx";
 import {TextField} from "@/components/ui/Fields/TextField";
 import {SelectField} from "@/components/ui/Fields/SelectField";
 import {ColorField} from "@/components/ui/Fields/ColorField";
-import {CATEGORY_TYPES, type CategoryValues} from "../types/CategoryTypes.ts";
+import {CATEGORY_TYPES, type CategoryValues} from "../../../types/Category/CategoryTypes.ts";
 import {useFormState} from "@/hooks/useFormState";
 import {useRequest} from "@/hooks/useRequest.ts";
 import type {FormProps} from "@/types/FormProps.ts";
