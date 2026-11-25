@@ -9,5 +9,9 @@ export type TransactionValues = {
 export const todayLocal = () => new Date().toLocaleDateString("sv-SE");
 
 export const EMPTY_TRANSACTION: TransactionValues = {
-    type: "EXPENSE", categoryId: "", value: "", description: "", dateTransaction: todayLocal(),
+    type: "EXPENSE",
+    categoryId: "",
+    value: "",
+    description: "",
+    dateTransaction: todayLocal(),
 };
