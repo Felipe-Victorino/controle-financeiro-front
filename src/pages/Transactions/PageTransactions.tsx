@@ -2,9 +2,8 @@ import PageContainer from "@/components/ui/Containers/PageContainer.tsx";
 import DashboardContainer from "@/components/ui/Containers/DashboardContainer.tsx";
 import DashboardTitle from "@/components/ui/DashboardTitle/DashboardTitle.tsx";
 import type {CategoryResponseValues, TransactionResponseValues} from "@/types/ServerResponseDTO.ts";
-import type {InfoField} from "@/components/ui/InfoList/InfoList.tsx";
-import {formatCurrency, formatDateOnly} from "@/utils/format.ts";
-import {Badge, Button, For, HStack, Icon, Spinner, Text, VStack} from "@chakra-ui/react";
+import {formatCurrency} from "@/utils/format.ts";
+import {Badge, Button, HStack, Icon, Spinner, Text, VStack} from "@chakra-ui/react";
 import {useParams} from "react-router-dom";
 import {toaster} from "@/components/ui/toaster.tsx";
 import {useRequest} from "@/hooks/useRequest.ts";
@@ -13,28 +12,12 @@ import {TransactionService} from "@/services/TransactionService.ts";
 import {CategoryService} from "@/services/CategoryService.ts";
 import {useTransactionStream} from "@/hooks/useTransactionStream.ts";
 import {BiSolidChess} from "react-icons/bi";
-import {DataCard} from "@/components/ui/InfoList/DataCard.tsx";
 import {ModalDialog} from "@/components/ui/ModalDialog/ModalDialog.tsx";
 import {TransactionForm} from "@/pages/Transactions/form/TransactionForm.tsx";
-import {EMPTY_TRANSACTION} from "@/pages/Transactions/types/TransactionTypes.ts";
+import {EMPTY_TRANSACTION} from "@/types/Transactions/TransactionTypes.ts";
 import {ConfirmDialog} from "@/components/ui/ModalDialog/ConfirmDialog.tsx";
-
-export const buildTransactionFields = (categories: CategoryResponseValues[]): InfoField<TransactionResponseValues>[] => {
-    const names = new Map(categories.map((c) => [c.id, c.name]));
-    return [
-        {
-            label: "Valor",
-            value: (t) => (
-                <Text fontWeight="semibold" color={t.type === "RECEIPT" ? "green.600" : "red.600"}>
-                    {t.type === "RECEIPT" ? "+ " : "- "}{formatCurrency(t.value)}
-                </Text>
-            ),
-        },
-        {label: "Categoria", value: (t) => names.get(t.categoryId) ?? "-"},
-        {label: "Data", value: (t) => formatDateOnly(t.dateTransaction)},
-        {label: "Criado por", value: (t) => t.createdBy},
-    ];
-};
+import {buildTransactionColumns} from "@/pages/Transactions/form/TransactionColumns.tsx";
+import DataTable from "@/components/ui/DataTable/DataTable.tsx";
 
 type DialogMode = "create" | "edit" | "delete" | null;
 
@@ -64,7 +47,7 @@ const PageTransactions = () => {
     const live = useTransactionStream(walletId, () => void loadTransactions());
 
     const transactions = txs.data ?? [];
-    const fields = useMemo(() => buildTransactionFields(cats.data ?? []), [cats.data]);
+    const columns = useMemo(() => buildTransactionColumns(cats.data ?? []), [cats.data]);
     const balance = transactions.reduce(
         (sum, t) => sum + (t.type === "RECEIPT" ? t.value : -t.value), 0,
     );
@@ -102,9 +85,13 @@ const PageTransactions = () => {
                     </HStack>
                 </HStack>
 
-                <For
-                    each={transactions}
-                    fallback={
+                <DataTable
+                    items={transactions}
+                    columns={columns}
+                    rowKey={(t) => t.id}
+                    onEdit={openEdit}
+                    onDelete={openDelete}
+                    empty={
                         isLoading ? (
                             <Spinner/>
                         ) : txs.error ? (
@@ -119,17 +106,7 @@ const PageTransactions = () => {
                             </VStack>
                         )
                     }
-                >
-                    {(t) => (
-                        <DataCard
-                            item={t}
-                            title={(x) => x.description || "Sem descrição"}
-                            fields={fields}
-                            onEdit={openEdit}
-                            onDelete={openDelete}
-                        />
-                    )}
-                </For>
+                />
 
                 <ModalDialog
                     open={mode === "create"} onOpenChange={handleOpenChange}
