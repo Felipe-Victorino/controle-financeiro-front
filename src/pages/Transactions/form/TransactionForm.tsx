@@ -7,8 +7,8 @@ import {SelectField} from "@/components/ui/Fields/SelectField";
 
 import {useFormState} from "@/hooks/useFormState";
 import {useRequest} from "@/hooks/useRequest";
-import {todayLocal, type TransactionValues} from "@/pages/Transactions/types/TransactionTypes.ts";
-import {CATEGORY_TYPES} from "@/pages/Category/types/CategoryTypes.ts";
+import {todayLocal, type TransactionValues} from "@/types/Transactions/TransactionTypes.ts";
+import {CATEGORY_TYPES} from "@/types/Category/CategoryTypes.ts";
 import type {FormProps} from "@/types/FormProps.ts";
 import type {CategoryResponseValues} from "@/types/ServerResponseDTO.ts";
 
@@ -18,7 +18,12 @@ type TransactionFormProps = FormProps<TransactionValues> & {
 };
 
 export const TransactionForm = ({
-                                    title, categories, initialValues, submitLabel, onSubmit, onSuccess,
+                                    title,
+                                    categories,
+                                    initialValues,
+                                    submitLabel,
+                                    onSubmit,
+                                    onSuccess,
                                 }: TransactionFormProps) => {
     const {values, setField, handleChange} = useFormState<TransactionValues>(initialValues);
     const {loading, error, run} = useRequest();
