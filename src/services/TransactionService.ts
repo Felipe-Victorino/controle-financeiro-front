@@ -1,13 +1,13 @@
 import BaseService from "@/services/BaseService.ts";
-import type {TransactionValues} from "@/pages/Transactions/types/TransactionTypes.ts";
+import type {TransactionValues} from "@/types/Transactions/TransactionTypes.ts";
 
 export class TransactionService extends BaseService {
     static #instance: TransactionService;
 
-    base = (walletId: string) => `/wallet/${walletId}/transactions`
+    base = (walletId: string) => `${walletId}/transactions`
 
     private constructor() {
-        super('');
+        super('/wallets');
     }
 
     public static get instance() {
@@ -23,19 +23,19 @@ export class TransactionService extends BaseService {
     };
 
     async list(walletId: string) {
-        return this.getWithTarget(this.base(walletId))
+        return await this.getById(this.base(walletId))
     };
 
     async create(walletId: string, data: TransactionValues) {
-        return this.postWithTarget(this.base(walletId), this.toRequest(data))
+        return await this.postWithTarget(this.base(walletId), this.toRequest(data))
     }
 
     async update(walletId: string, id: number, v: TransactionValues) {
-        return this.putWithTarget(`${this.base(walletId)}/${id}`, this.toRequest(v))
+        return await this.put(`${this.base(walletId)}/${id}`, this.toRequest(v))
     }
 
     async remove(walletId: string, id: number) {
-        return this.deleteWithTarget(`${this.base(walletId)}`, id);
+        return await this.deleteWithTarget(`${this.base(walletId)}`, id);
     }
 
 
