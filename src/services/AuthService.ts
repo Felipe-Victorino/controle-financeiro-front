@@ -1,7 +1,7 @@
 import BaseService from "./BaseService";
 import type {AxiosResponse} from "axios";
 import type {ForgotValues, LoginValues, RegisterValues, ResetValues} from "@/types/Auth/AuthRequests.ts";
-import type {UserType} from "@/types/UserType.ts";
+import type {UserType} from "@/types/User/UserType.ts";
 
 class AuthService extends BaseService {
 
@@ -48,7 +48,7 @@ class AuthService extends BaseService {
         if (this.isAuthenticated()) {
             localStorage.clear();
             sessionStorage.clear();
-            await this.post("/logout");
+            await this.postWithTarget("/logout");
         }
     }
 

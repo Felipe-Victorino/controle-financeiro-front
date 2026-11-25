@@ -21,7 +21,7 @@ export class CategoryService extends BaseService {
     }
 
     async createCategory(values: object) {
-        return await this.insert(values);
+        return await this.post(values);
     }
 
     async updateCategory(id: number, data: object) {
@@ -33,7 +33,7 @@ export class CategoryService extends BaseService {
     }
 
     async deactivateCategory(id: number) {
-        return await this.putWithTarget(`/deactivate/${id}`, {})
+        return await this.put(`/deactivate/${id}`, {})
     }
 
 
