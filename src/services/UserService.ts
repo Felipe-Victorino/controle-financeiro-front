@@ -17,7 +17,7 @@ class UserService extends BaseService {
     }
 
     async getAuthenticatedUserData() {
-        return this.get();
+        return await this.get();
     }
 }
 
